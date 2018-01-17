@@ -21,7 +21,7 @@ if case_id == 'all':
 	rp = get_assign_rules()
 	for report_id, rules in rp.iteritems():
 		caselist = sf.fetch_case_from_report(browser, report_id)
-		print "New Case:", len(caselist)
+		print "Report %s New Case:%d" % (report_id, len(caselist))
 		noassighlist= []
 		for case in caselist:
 			if case == {}:
@@ -38,8 +38,12 @@ if case_id == 'all':
 					is_match = True
 			if not is_match:
 				noassighlist.append(case)
-		for case in noassighlist:
-			print "not match in %s case list:" % report_id, case
+		if noassighlist != []:
+			print "not match in %s case list:" % report_id
+			for case in noassighlist:
+				print [ i[1] for i in case.items() ]
+			print "======================================="
+		sleep(2)
 else:
 	user_id = get_user_prop(assignee, 'sf_id')
 	if case_id.isdigit():
