@@ -28,7 +28,8 @@ def get_assign_rules():
 	rp = {}
 	for row in result:
 		report_id = row['report_id']
-		rp[report_id] = []
+		if not report_id in rp.keys():
+			rp[report_id] = [] 
 		rp[report_id].append(row)
 	return rp
 
