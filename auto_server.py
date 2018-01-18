@@ -178,7 +178,11 @@ if len(sys.argv) < 2:
 	print "%s sync|clonecheck|assign" % sys.argv[0]
 	sys.exit()
 server = sys.argv[1]
+if server == 'sync' or server == 'proxy':
+	proxy = "cedump-sh.ap.qualcomm.com:9090"
+else:
+	proxy = None
 while(True):
-	browser = sf_login(case_url)
+	browser = sf_login(case_url, proxy)
 	run_server(server)
 	time.sleep(6)

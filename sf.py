@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.proxy import ProxyType
 
 from pymail import send_mail
 from Crypto.Cipher import AES
@@ -120,7 +121,7 @@ def add_comments(browser, comments, case_id = None, is_public=False):
 	return True
 
 
-def sf_login(url):
+def sf_login(url, proxy=None):
 	user_name = "xling"
 	f = open("passwd", "rb")
 	user_pwd = f.readline().strip()
@@ -129,6 +130,10 @@ def sf_login(url):
 	profile.native_events_enabled = True
 #	profile.set_preference("browser.download.dir", "/home/xling/Downloads/sfreport");
 #	profile.set_preference("browser.download.useDownloadDir", "true");
+	if proxy is not None:
+		raw = {'proxyType':{ 'ff_value':1, 'string': 'manual'}, 'httpProxy':proxy}
+		proxy = webdriver.Proxy(raw)
+		profile.set_proxy(proxy)
 
 	browser = webdriver.Firefox(profile, executable_path="/usr/bin/geckodriver")
 
