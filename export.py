@@ -35,6 +35,14 @@ elif cmd == 'export':
 		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, title)))
 		print "Rule page open, click export rules..."
 		click_timeout(browser,  title)
+	elif data == 'kid':
+		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
+		browser.get(url)
+		xpath = "//a[@class='k-button k-button-icontext k-grid-excel']"
+		WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
+		sleep(2)
+		cols = parse_kba(browser)
+		insert_kba(cols)
 	elif data == 'kba':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)

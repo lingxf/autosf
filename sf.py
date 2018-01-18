@@ -217,3 +217,22 @@ def fetch_case_from_report(browser, report_id):
 		caselist.append(dict(zip(fields, [ col.text for col in cols])))
 	caselist = filter(lambda x: x != {}, caselist)	
 	return caselist		
+
+def parse_kba(browser):
+	lines = browser.find_elements_by_xpath("//div[@id='gridKnowledgeBases']/table[@class='k-selectable']/tbody[@role='rowgroup']/tr[*]")
+	if lines == []:
+		return False;
+	print "Find %s lines" % len(lines)
+	kbas = []
+	for line in lines:
+		tds = line.find_elements_by_xpath("./td")
+		cols = []
+		kid =  tds[0].get_attribute("innerHTML")
+		cols.append(kid)
+		try:
+			for i in xrange(1, 10):
+				cols.append(tds[i].get_attribute("innerHTML"))
+		except:
+			print "exception column:", i
+		kbas.append(cols)
+	return kbas

@@ -1,7 +1,11 @@
 #!/usr/bin/python
+import datetime
+import traceback
+import sys
+import MySQLdb
+
 #coding:utf-8
 def get_wrong_clone_case():
-	import MySQLdb
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
 
@@ -104,4 +108,38 @@ def get_case_by_number(field, case_number):
 	c.execute(sql)
 	return c.fetchone()[0]
 
+def insert_kba(kbas):
+	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+	c=db.cursor()
+	total_update = 0
+	total_insert = 0
+	for cols in kbas:
+		kid =       cols[0]
+		title =		cols[1]
+		kba_id = cols[2]
+		rev = cols[3]
+		dcn = cols[4]
+		status = cols[5]
+		content_group = cols[6]
+		createdby= cols[7]
+		modifiedby= cols[8]
+		modifiedon= cols[9]
+		title = title.replace("'","''", 10) 
+		modifiedon = datetime.datetime.strptime(modifiedon, "%m/%d/%Y %I:%M %p").strftime("%Y-%m-%d %H:%M:%S")
 
+		sql_update = " update cnsf.kba_stock set status = '%s', rev = %s, kid = %s, related = '%s', author = '%s', modified = '%s', modified_date = '%s' where kba_id = '%s' and rev <= %s  " % (status, rev, kid, dcn, createdby, modifiedby, modifiedon, kba_id, rev ) 
+		ct = c.execute(sql_update)
+		total_update += ct
+
+		sql = " insert into cnsf.kba_stock (kba_id, kid, title, rev, related, status, author, modified, modified_date) values ( '%s', %s,'%s', '%s', '%s','%s','%s','%s','%s' )" % (kba_id, kid, title, rev, dcn, status, createdby, modifiedby, modifiedon) 
+		insert_fail = False
+		try:
+			c.execute(sql)
+		except:
+			insert_fail = True
+		if not insert_fail:
+			total_insert += 1
+			print sql
+	print "Total Update:%d, Total Insert:%d" % (total_update, total_insert)
+	db.commit()
+	db.close()
