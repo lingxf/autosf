@@ -50,7 +50,7 @@ elif cmd == 'export':
 				continue
 			print rows
 			for onerow in rows:
-				print onerow.get_attribute('innerHTML')
+				print "click export KBA..." 
 				onerow.click()
 				is_quit = 0
 				break
