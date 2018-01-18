@@ -36,6 +36,7 @@ if case_id == 'all':
 					print "assign case %s:%s to %s:%s by condition:%s" % (case['Case Number'],case['Case ID'],  alias, user_id, rule['condition'] )
 					assign_case(browser, case['Case ID'], user_id)	
 					is_match = True
+					break
 			if not is_match:
 				noassighlist.append(case)
 		if noassighlist != []:
