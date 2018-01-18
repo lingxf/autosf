@@ -19,7 +19,7 @@ import MySQLdb
 def get_assign_rules():
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
-	sql = "select * from rules where active = 1 "
+	sql = "select * from rules where active = 1 order by priority asc "
 	c.execute(sql)
 	columns = tuple( [d[0].decode('utf8') for d in c.description] )
 	result = []
