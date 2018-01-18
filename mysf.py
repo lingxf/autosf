@@ -50,9 +50,6 @@ def check_rule_permission(case, rule):
 	return False
 
 def match_rule(case, condition):
-	if case['Customer Location'] != 'China':
-		print "Non China case in assign", case
-		return False
 	owner = case['Case Owner Alias']
 	chipset = case['Chipset']
 	customer = case['Account Name']
@@ -61,6 +58,9 @@ def match_rule(case, condition):
 	pa1 = case['Problem Area 1']
 	pa2 = case['Problem Area 2']
 	pa3 = case['Problem Area 3']
+	if case['Customer Location'] != 'China' and not customer.rfind("Xiaomi") and not customer.rfind("OPPO"):
+		print "Non China case in assign except for OPPO/Xiaomi", case
+		return False
 	return eval(condition)
 
 def get_user_prop(user, prop):
