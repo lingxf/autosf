@@ -245,7 +245,7 @@ def parse_kba(browser):
 	lines = browser.find_elements_by_xpath("//div[@id='gridKnowledgeBases']/table[@class='k-selectable']/tbody[@role='rowgroup']/tr[*]")
 	if lines == []:
 		return False;
-	print "Find %s lines" % len(lines)
+	print >>sys.stderr,"Find %s lines" % len(lines)
 	kbas = []
 	for line in lines:
 		tds = line.find_elements_by_xpath("./td")
@@ -256,6 +256,6 @@ def parse_kba(browser):
 			for i in xrange(1, 10):
 				cols.append(tds[i].get_attribute("innerHTML"))
 		except:
-			print "exception column:", i
+			print >>sys.stderr, "exception column:", i
 		kbas.append(cols)
 	return kbas

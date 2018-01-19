@@ -79,6 +79,9 @@ def match_rule(case, condition):
 	pa1 = case['Problem Area 1']
 	pa2 = case['Problem Area 2']
 	pa3 = case['Problem Area 3']
+	rating = ''
+	sb = ''
+	ces = 1
 	if case['Customer Location'] != 'China' and not customer.rfind("Xiaomi") and not customer.rfind("OPPO"):
 		print "Non China case in assign except for OPPO/Xiaomi", case
 		return False
@@ -155,7 +158,7 @@ def insert_kba(kbas):
 		ct = c.execute(sql_update)
 		total_update += ct
 
-		sql = " insert into cnsf.kba_stock (kba_id, kid, title, rev, related, status, author, modified, modified_date) values ( '%s', %s,'%s', '%s', '%s','%s','%s','%s','%s' )" % (kba_id, kid, title, rev, dcn, status, createdby, modifiedby, modifiedon) 
+		sql = " insert into cnsf.kba_stock (kba_id, kid, title, rev, related, status, author, modified, modified_date, importer) values ( '%s', %s,'%s', '%s', '%s','%s','%s','%s','%s', 'auto' )" % (kba_id, kid, title, rev, dcn, status, createdby, modifiedby, modifiedon) 
 		insert_fail = False
 		try:
 			c.execute(sql)
@@ -164,6 +167,6 @@ def insert_kba(kbas):
 		if not insert_fail:
 			total_insert += 1
 			print sql
-	print "Total Update:%d, Total Insert:%d" % (total_update, total_insert)
+	print >>sys.stderr,"Total Update:%d, Total Insert:%d" % (total_update, total_insert)
 	db.commit()
 	db.close()

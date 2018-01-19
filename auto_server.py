@@ -19,6 +19,8 @@ from selenium.webdriver.common.keys import Keys
 from pymail import send_mail
 from pymail import error_mail
 
+import sf
+import mysf
 from selenium.webdriver.support.select import Select
 from sf import *
 from mysf import *
@@ -126,8 +128,8 @@ def run_server(server_address):
 				elif cmd == 'fetchid':
 					report_id = data
 					user_map = sf.fetch_user_id_from_report(browser, report_id)
-					print user_map
-					print "Total User Id:",len(user_map)
+					print >>sys.stderr, user_map
+					print >>sys.stderr, "Total User Id:",len(user_map)
 					r = [mysf.set_user_prop(alias, 'sf_id', user_id) for alias, user_id in user_map.iteritems()]
 				elif cmd == 'assign':
 					try:
