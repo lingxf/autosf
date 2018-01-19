@@ -19,6 +19,8 @@ from selenium.webdriver.common.keys import Keys
 from pymail import send_mail
 from pymail import error_mail
 
+import sf
+import mysf
 from selenium.webdriver.support.select import Select
 from sf import *
 from mysf import *
@@ -42,7 +44,7 @@ from selenium.webdriver.support.select import Select
 import base64
 from Crypto.Cipher import AES
 
-global server_address, kba_server_address, rule_server_address
+global browser
 
 
 
@@ -76,6 +78,7 @@ def parse_cmdline(cmdline):
 def run_server(server_address):
 	server_address = "/var/lock/%s" % server_address
 	sock = start_sock(server_address)
+	global browser
 	while True:
 		print >>sys.stderr, 'waiting for a connection'
 		connection, client_address = sock.accept()
@@ -126,8 +129,8 @@ def run_server(server_address):
 				elif cmd == 'fetchid':
 					report_id = data
 					user_map = sf.fetch_user_id_from_report(browser, report_id)
-					print user_map
-					print "Total User Id:",len(user_map)
+					print >>sys.stderr, user_map
+					print >>sys.stderr, "Total User Id:",len(user_map)
 					r = [mysf.set_user_prop(alias, 'sf_id', user_id) for alias, user_id in user_map.iteritems()]
 				elif cmd == 'assign':
 					try:
@@ -140,6 +143,12 @@ def run_server(server_address):
 						sf_login(browser)
 					else:
 						sf_login(browser, None, int(data))
+				elif cmd == 'restart':
+					browser.quit()
+					proxy = None
+					if data != '':
+						proxy = set_proxy(data)
+					browser = open_browser(proxy)
 				elif cmd == 'test':
 					try:
 						execfile('test.py')
@@ -167,9 +176,6 @@ def set_proxy(proxy):
 		proxy = None
 	return proxy
 
-
-global browser
-
 proxy = None
 if len(sys.argv) < 2:
 	print "%s sync|clonecheck|assign" % sys.argv[0]
@@ -184,9 +190,13 @@ if len(sys.argv) > 3:
 server = sys.argv[1]
 
 while(True):
-	if timeout:
-		browser = sf_start(None, proxy, timeout)
+	if server == 'simple':
+		browser = open_browser(proxy)
+		browser.get("http://cedump-sh.ap.qualcomm.com/report/show_mysfrule.php")
 	else:
-		browser = sf_start(None, proxy)
+		if timeout:
+			browser = sf_start(None, proxy, timeout)
+		else:
+			browser = sf_start(None, proxy)
 	run_server(server)
 	time.sleep(6)
