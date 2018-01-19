@@ -31,9 +31,9 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 				rp = get_rules_for_report(arg)
 			else:
 				rp = get_rules_for_queue(arg)
+			print rp
 		else:
 			rp = get_assign_rules(case_id)
-		print rp
 	except:
 		traceback.print_exc(file=sys.stderr)
 	for report_id, rules in rp.iteritems():
