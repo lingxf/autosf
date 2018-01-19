@@ -17,6 +17,8 @@ import datetime
 from lxml import etree
 from selenium.webdriver.common.keys import Keys
 from pymail import send_mail
+from pymail import error_mail
+
 from selenium.webdriver.support.select import Select
 from sf import *
 from mysf import *
@@ -70,18 +72,6 @@ def parse_cmdline(cmdline):
 	else:
 		data = ''
 	return (cmd, data)
-
-def error_mail(cmd):
-	subject = "Auto server run error:%s" % cmd
-	f = open("auto_server.error.tmp", "w+")
-	traceback.print_exc(file=sys.stderr)
-	traceback.print_exc(file=f)
-	f.close()
-	f = open("auto_server.error.tmp", "r")
-	msg = ""
-	for line in f:
-		msg += line + '\r'
-	send_mail(['xling@qti.qualcomm.com'], subject, msg )
 
 def run_server(server_address):
 	server_address = "/var/lock/%s" % server_address

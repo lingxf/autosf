@@ -3,8 +3,11 @@ import datetime
 import traceback
 import sys
 import MySQLdb
+import pymail
 
 #coding:utf-8
+import MySQLdb
+
 def get_wrong_clone_case():
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
@@ -19,11 +22,25 @@ def get_wrong_clone_case():
 	rows = c.fetchall()
 	return rows
 
-import MySQLdb
-def get_assign_rules():
+
+def get_rules_for_queue(queue_name):
+	sql = "select * from rules where queue_name = '%s' order by priority asc " % queue_name
+	return get_rules_from_sql(sql)
+
+def get_rules_for_report(report_id):
+	sql = "select * from rules where report_id = '%s' order by priority asc " % report_id
+	return get_rules_from_sql(sql)
+
+def get_assign_rules(is_test = 'all'):
+	if is_test == 'test':
+		sql = "select * from rules order by priority asc "
+	else:
+		sql = "select * from rules where active = 1 order by priority asc "
+	return get_rules_from_sql(sql)
+
+def get_rules_from_sql(sql):
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
-	sql = "select * from rules where active = 1 order by priority asc "
 	c.execute(sql)
 	columns = tuple( [d[0].decode('utf8') for d in c.description] )
 	result = []
@@ -51,7 +68,7 @@ def check_rule_permission(case, rule):
 		return True
 	if alias == 'xling':
 		return True
-	return False
+	return True
 
 def match_rule(case, condition):
 	owner = case['Case Owner Alias']
@@ -65,7 +82,14 @@ def match_rule(case, condition):
 	if case['Customer Location'] != 'China' and not customer.rfind("Xiaomi") and not customer.rfind("OPPO"):
 		print "Non China case in assign except for OPPO/Xiaomi", case
 		return False
-	return eval(condition)
+	try:
+		matched = eval(condition)
+	except:
+		matched = False
+		print "Rule exception", condition
+		error_mail("Match rule")
+	return matched
+
 
 def get_user_prop(user, prop):
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")

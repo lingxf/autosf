@@ -2,6 +2,8 @@
 # _*_ coding: utf-8 -*-
 import smtplib	
 import os
+import sys
+import traceback
 from email.mime.text import MIMEText  
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -47,6 +49,18 @@ def send_mail(to_list,sub, text, files=[]):
 	except Exception, e:  
 		print str(e)  
 		return False  
+
+def error_mail(cmd):
+	subject = "Auto server run error:%s" % cmd
+	f = open("error.tmp", "w+")
+	traceback.print_exc(file=sys.stderr)
+	traceback.print_exc(file=f)
+	f.close()
+	f = open("error.tmp", "r")
+	msg = ""
+	for line in f:
+		msg += line + '\r'
+	send_mail(['xling@qti.qualcomm.com'], subject, msg )
 
 if __name__ == '__main__':	
 	#f = os.popen("php std_report.php l01")
