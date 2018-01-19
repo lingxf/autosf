@@ -71,7 +71,7 @@ elif cmd == 'export':
 			report_id = data
 		url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
 		browser.get(url)
-		WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'fchArea')))
+		WebDriverWait(browser, 60, 1).until(EC.presence_of_element_located((By.ID, 'fchArea')))
 		click_timeout(browser, "//input[@value=\"Export Details\"]")
 		WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'bottomButtonRow')))
 		click_timeout(browser, "//input[@value=\"Export\"]")
