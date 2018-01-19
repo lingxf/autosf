@@ -43,12 +43,6 @@ from Crypto.Cipher import AES
 global server_address, kba_server_address, rule_server_address
 
 
-def open_browser(url):
-	profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/nw3oghgt.auto/')
-	profile.native_events_enabled = True
-	browser = webdriver.Firefox(profile, executable_path="/usr/bin/geckodriver")
-	browser.get(url)
-	return browser
 
 def start_sock(server_address):
 	try:
@@ -125,7 +119,6 @@ def run_server(server_address):
 					except:
 						error_mail(cmd)
 						break
-						#brwser.implicitly_wait(60)
 				elif cmd == 'clonecheck':
 					try:
 						execfile('clonecheck.py')
@@ -152,6 +145,11 @@ def run_server(server_address):
 					except:
 						error_mail(cmd)
 						break
+				elif cmd == 'sf':
+					if data == '':
+						sf_login(browser)
+					else:
+						sf_login(browser, None, int(data))
 				elif cmd == 'test':
 					try:
 						execfile('test.py')
@@ -170,19 +168,35 @@ def run_server(server_address):
 				break
 	browser.quit()
 
-url = "http://linux-bug.ap.qualcomm.com/report/show_case.php?action=wlist"
-case_url = "https://qualcomm-cdmatech-support.my.salesforce.com/00O3A000009OpFh"
+def set_proxy(proxy):
+	if proxy == 'proxy':
+		proxy = "cedump-sh.ap.qualcomm.com:9090"
+	elif proxy == 'sdproxy':
+		proxy = "secure-proxy2.qualcomm.com:9090"
+	elif proxy == 'noproxy':
+		proxy = None
+	return proxy
+
+
 global browser
 
+proxy = None
 if len(sys.argv) < 2:
 	print "%s sync|clonecheck|assign" % sys.argv[0]
 	sys.exit()
+if len(sys.argv) > 2:
+	proxy = set_proxy(sys.argv[2])
+
+timeout = None
+if len(sys.argv) > 3:
+	timeout = int(sys.argv[3])
+
 server = sys.argv[1]
-if server == 'sync' or server == 'proxy':
-	proxy = "cedump-sh.ap.qualcomm.com:9090"
-else:
-	proxy = None
+
 while(True):
-	browser = sf_login(case_url, proxy)
+	if timeout:
+		browser = sf_start(None, proxy, timeout)
+	else:
+		browser = sf_start(None, proxy)
 	run_server(server)
 	time.sleep(6)

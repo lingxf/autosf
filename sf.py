@@ -120,12 +120,7 @@ def add_comments(browser, comments, case_id = None, is_public=False):
 		return False
 	return True
 
-
-def sf_login(url, proxy=None):
-	user_name = "xling"
-	f = open("passwd", "rb")
-	user_pwd = f.readline().strip()
-
+def open_browser(proxy=None):
 	profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/nw3oghgt.auto/')
 	profile.native_events_enabled = True
 #	profile.set_preference("browser.download.dir", "/home/xling/Downloads/sfreport");
@@ -135,27 +130,55 @@ def sf_login(url, proxy=None):
 		proxy = webdriver.Proxy(raw)
 		profile.set_proxy(proxy)
 
-	browser = webdriver.Firefox(profile, executable_path="/usr/bin/geckodriver")
-
 	#browser = webdriver.Remote("http://localhost:4444/wd/hub", webdriver.DesiredCapabilities.HTMLUNIT.copy())
+	browser = webdriver.Firefox(profile, executable_path="/usr/bin/geckodriver")
+	#brwser.implicitly_wait(60)
+	return browser
 
-	browser.get(url)
-	#add code begin 20171108
+def sf_start(url, proxy=None, timeout=60):
+	browser = open_browser(proxy)
+	sf_login(browser, url, timeout) 
+	return browser
+
+def sf_login(browser, url=None, timeout = 60):
+	default_url = "https://qualcomm-cdmatech-support.my.salesforce.com/00O3A000009OpFh"
+	user_name = "xling"
+	f = open("passwd", "rb")
+	user_pwd = f.readline().strip()
+	browser.get(default_url)
+
 	ciphertext = base64.b64decode(user_pwd)
 	obj2 = AES.new('This is a key123', AES.MODE_CFB, 'This is an IV456')
 	user_pwd = obj2.decrypt(ciphertext)
 
 	print "login...."
-	WebDriverWait(browser,120,0.5).until(EC.title_contains(r"CreatePoint"))
-
-	sleep(2)
-	browser.find_element_by_xpath("//*[@id=\"frmLogin\"]/input[4]").send_keys(user_name)
-	browser.find_element_by_xpath("//*[@id=\"frmLogin\"]/input[5]").send_keys(user_pwd)
-	browser.find_element_by_xpath("//*[@id=\"frmLogin\"]/input[8]").click()
-	WebDriverWait(browser,120,0.5).until(EC.title_contains(r"china-update-"))
-	for cookie in browser.get_cookies():
-		print "%s -> %s" % (cookie['name'], cookie['value'])
-	return browser
+	state = 0
+	while timeout > 0:
+		sleep(1)
+		timeout -= 1
+		title = browser.title.encode('ascii')
+		if timeout % 10 == 0:
+			title = browser.title
+			print "10 seconds pass..., title:",title
+		try:
+			if state == 0 and title.rfind("CreatePoint") != -1:
+				print "Find Login UI"
+				state = 1
+				sendkey_timeout(browser, "//*[@id=\"frmLogin\"]/input[4]",user_name)
+				sendkey_timeout(browser, "//*[@id=\"frmLogin\"]/input[5]", user_pwd)
+				click_timeout(browser, "//*[@id=\"frmLogin\"]/input[8]")
+			if (state == 0 or state == 1) and "china-update-" in title:
+				print "Login Sucessfully"
+				for cookie in browser.get_cookies():
+					print "%s -> %s" % (cookie['name'], cookie['value'])
+				if url != None:
+					browser.get(url)
+				return True
+		except:
+			print "SF login exception"
+			traceback.print_exc(file=sys.stderr)
+	print "Timeout, login fail..."
+	return False
 
 def select_option(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
