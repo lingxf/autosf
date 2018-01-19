@@ -39,7 +39,7 @@ elif cmd == 'export':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)
 		xpath = "//a[@class='k-button k-button-icontext k-grid-excel']"
-		WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
+		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
 		sleep(2)
 		cols = parse_kba(browser)
 		insert_kba(cols)
@@ -47,7 +47,7 @@ elif cmd == 'export':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)
 		xpath = "//a[@class='k-button k-button-icontext k-grid-excel']"
-		WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
+		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
 		print "Find xpath:", xpath
 		is_quit = 20
 		while is_quit > 0:
