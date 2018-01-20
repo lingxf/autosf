@@ -79,8 +79,8 @@ def change_status(browser, status, option=None):
 	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, eid)))
 	select_option(browser, eid, str_status)
 	try:
-		WebDriverWait(browser,3, 1).until(EC.visibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
-		WebDriverWait(browser,3, 1).until(EC.invisibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
+		WebDriverWait(browser,6, 1).until(EC.visibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
+		WebDriverWait(browser,6, 1).until(EC.invisibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
 	except:
 		print("Wait Timeout")
 	print("Saving ...")
@@ -126,7 +126,7 @@ def open_browser(proxy=None):
 #	profile.set_preference("browser.download.dir", "/home/xling/Downloads/sfreport");
 #	profile.set_preference("browser.download.useDownloadDir", "true");
 	if proxy is not None:
-		raw = {'proxyType':{ 'ff_value':1, 'string': 'manual'}, 'httpProxy':proxy}
+		raw = {'proxyType':{ 'ff_value':1, 'string': 'manual'}, 'httpProxy':proxy, 'sslProxy':proxy}
 		proxy = webdriver.Proxy(raw)
 		profile.set_proxy(proxy)
 
