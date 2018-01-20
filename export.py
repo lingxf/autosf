@@ -28,6 +28,8 @@ if cmd == 'click':
 	print "click export report..."
 	click_timeout(browser, "//input[@value=\"Export\"]", 2)
 elif cmd == 'export':
+	w = data.split(' ')
+	data = w[0]
 	if data == 'rules':
 		url = "http://aquaprod04.qualcomm.com/caseassignment/"
 		browser.get(url)
@@ -41,8 +43,11 @@ elif cmd == 'export':
 		xpath = "//a[@class='k-button k-button-icontext k-grid-excel']"
 		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
 		sleep(2)
-		cols = parse_kba(browser)
-		insert_kba(cols)
+		if len(w) > 1:
+			n = int(w[1])
+		else:
+			n = 1
+		cols = parse_kba_pages(browser, n)
 	elif data == 'kba':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)

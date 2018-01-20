@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.proxy import ProxyType
 
 from pymail import send_mail
+from mysf import *
 from Crypto.Cipher import AES
 from time import sleep	
 import base64
@@ -259,3 +260,19 @@ def parse_kba(browser):
 			print >>sys.stderr, "exception column:", i
 		kbas.append(cols)
 	return kbas
+
+def parse_kba_pages(browser, n):
+	for i in xrange(1, n+1):
+		print "page:", i
+		cols = parse_kba(browser)
+		insert_kba(cols)
+		xpath = "//div[@id='gridKnowledgeBasesPgr']/a[@title='Go to the next page']/span"
+		tds = browser.find_elements_by_xpath(xpath)
+		if tds != []:
+			print tds[0].get_attribute("innerHTML")
+			tds[0].click()
+			xpath = "//a[@class='k-button k-button-icontext k-grid-excel']"
+			WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
+			sleep(4)
+			cols = parse_kba(browser)
+			insert_kba(cols)
