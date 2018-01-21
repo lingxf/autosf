@@ -13,7 +13,7 @@ from email.utils import COMMASPACE,formatdate
 from email import encoders
 
 mailto_list=['xling@qti.qualcomm.com']
-mailto_list=['ce.cps.cn.labsp.qc@qti.qualcomm.com']
+#mailto_list=['ce.cps.cn.labsp.qc@qti.qualcomm.com']
 #mailto_list=['xling@cedump-sh.ap.qualcomm.com']
 mail_host="localhost"  #设置服务器
 #mail_host="smtp.qualcomm.com"	#设置服务器
@@ -34,7 +34,7 @@ def send_mail(to_list,sub, text, files=[]):
 	msg.attach(MIMEText(text)) 
 	for file in files: 
 	   part = MIMEBase('application', 'octet-stream') #'octet-stream': binary data 
-	   part.set_payload(open(file, 'rb'.read())) 
+	   part.set_payload(open(file, 'rb').read()) 
 	   encoders.encode_base64(part) 
 	   part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(file)) 
 	   msg.attach(part) 
@@ -66,7 +66,13 @@ if __name__ == '__main__':
 	#f = os.popen("php std_report.php l01")
 	#rp = "\r".join(f.readlines())
 	rp = "Test"
-	if send_mail(mailto_list,"Test", rp): 
+	filepath = '/home/xling/Downloads/export'
+	filename = max([filepath +"/"+ f for f in os.listdir(filepath)], key=os.path.getctime)
+	print filename
+	#shutil.move(os.path.join(dirpath,filename),newfilename)
+	files = []
+	files.append(filename)
+	if send_mail(mailto_list,"Test", rp, files): 
 		print "发送成功"  
 	else:  
 		print "发送失败"  
