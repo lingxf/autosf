@@ -22,10 +22,10 @@ if cmd == 'click':
 			url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
 			browser.get(url)
 			WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'fchArea')))
-		print "click export detail..."
+		print >>sys.stderr, "click export detail..."
 		click_timeout(browser, "//input[@value=\"Export Details\"]")
 		WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'bottomButtonRow')))
-	print "click export report..."
+	print >>sys.stderr, "click export report..."
 	click_timeout(browser, "//input[@value=\"Export\"]", 2)
 elif cmd == 'export':
 	w = data.split(' ')
@@ -33,10 +33,17 @@ elif cmd == 'export':
 	if data == 'rules':
 		url = "http://aquaprod04.qualcomm.com/caseassignment/"
 		browser.get(url)
+		WebDriverWait(browser,300, 1).until(EC.title_contains('Case Assignment Rules'))
+		userid =  "//input[@id='userid']"
+		inputs = browser.find_elements_by_xpath(userid)
+		if len(inputs) > 0:
+			print >>sys.stderr, "Need input user id..."
+			inputs[0].send_keys('xling')
+			browser.find_element_by_xpath("//input[@id='submit']").click()		
 		title =  "//a[@title='Export to Excel']"
 		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, title)))
-		print "Rule page open, click export rules..."
-		click_timeout(browser,  title)
+		print >>sys.stderr, "Now click rule export..."
+		click_timeout(browser, title)
 	elif data == 'kid':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)
