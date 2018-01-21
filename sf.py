@@ -121,11 +121,15 @@ def add_comments(browser, comments, case_id = None, is_public=False):
 		return False
 	return True
 
-def open_browser(proxy=None):
+def open_browser(proxy=None, download=None):
 	profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/nw3oghgt.auto/')
 	profile.native_events_enabled = True
-#	profile.set_preference("browser.download.dir", "/home/xling/Downloads/sfreport");
+	if download:
+		profile.set_preference("browser.download.dir", download);
+
+
 #	profile.set_preference("browser.download.useDownloadDir", "true");
+#	profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/plain, application/vnd.ms-excel, text/csv, text/comma-separated-values, application/octet-stream")
 	if proxy is not None:
 		raw = {'proxyType':{ 'ff_value':1, 'string': 'manual'}, 'httpProxy':proxy, 'sslProxy':proxy}
 		proxy = webdriver.Proxy(raw)
@@ -179,6 +183,17 @@ def sf_login(browser, url=None, timeout = 60):
 			print "SF login exception"
 			traceback.print_exc(file=sys.stderr)
 	print "Timeout, login fail..."
+	return False
+
+def select_option_with(browser, eid, text):
+	ele = find_element_by_id_timeout(browser, eid)
+	ops = ele.find_elements_by_xpath("./option")
+	for op in ops:
+		value = op.text
+		if text in op.text:
+			sel = Select(ele)
+			sel.select_by_visible_text(value)
+			return True
 	return False
 
 def select_option(browser, eid, text):
