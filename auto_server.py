@@ -44,7 +44,7 @@ from selenium.webdriver.support.select import Select
 import base64
 from Crypto.Cipher import AES
 
-global browser
+global browser, proxy
 
 
 
@@ -78,7 +78,7 @@ def parse_cmdline(cmdline):
 def run_server(server_address):
 	server_address = "/var/lock/%s" % server_address
 	sock = start_sock(server_address)
-	global browser
+	global browser, proxy
 	while True:
 		print >>sys.stderr, 'waiting for a connection'
 		connection, client_address = sock.accept()
@@ -145,7 +145,6 @@ def run_server(server_address):
 						sf_login(browser, None, int(data))
 				elif cmd == 'restart':
 					browser.quit()
-					proxy = None
 					if data != '':
 						proxy = set_proxy(data)
 					browser = open_browser(proxy)
@@ -165,7 +164,10 @@ def run_server(server_address):
 			connection.close()
 			if is_quit:
 				break
-	browser.quit()
+	try:
+		browser.quit()
+	except:
+		print >>sys.stderr, "Quit exception"
 
 def set_proxy(proxy):
 	if proxy == 'proxy':
