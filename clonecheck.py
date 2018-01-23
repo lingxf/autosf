@@ -32,10 +32,10 @@ for (case_id, case_number) in case_list:
 	WebDriverWait(browser,10,0.5).until(EC.url_contains(case_id))
 	try:
 		if not change_status(browser, 'researchi'):
-			error_mail("Save case status %s:%s failure, please check" % (case_number, case_id))
+			error_mail("Clonecheck:Save case status %s:%s failure, please check" % (case_number, case_id))
 			continue
 		if not add_comments(browser, comments, case_id):
-			error_mail("Save case comments %s:%s failure, please check" % (case_number, case_id))
+			error_mail("Clone check Save case comments %s:%s failure, please check" % (case_number, case_id))
 			continue
 	except:
 		print >>sys.stderr, "Fail to handle this case"

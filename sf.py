@@ -84,6 +84,7 @@ def change_status(browser, status, option=None):
 		WebDriverWait(browser,6, 1).until(EC.invisibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
 	except:
 		print("Wait Timeout")
+	sleep(2)
 	print("Saving ...")
 	click_timeout(browser, '//*[@id="pg:frm:blk:navBtns:btnSave"]', 20);
 	#click_timeout(browser, '//*[@id="pg:frm:blk:navBtns"]/input[3]');#cancel
