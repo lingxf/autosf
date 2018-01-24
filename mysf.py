@@ -90,7 +90,7 @@ def match_rule(case, condition):
 	except:
 		matched = False
 		print "Rule exception", condition
-		error_mail("Match rule")
+		pymail.error_mail("Match rule")
 	return matched
 
 
