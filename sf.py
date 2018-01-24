@@ -191,16 +191,43 @@ def select_option_with(browser, eid, text):
 	ops = ele.find_elements_by_xpath("./option")
 	for op in ops:
 		value = op.text
+		selected = op.get_attribute('selected')
 		if text in op.text:
+			if selected:
+				return 2
 			sel = Select(ele)
 			sel.select_by_visible_text(value)
-			return True
-	return False
+			return 1
+	return 0
 
 def select_option(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
 	sel = Select(ele)
 	sel.select_by_visible_text(text)
+
+def fill_options(browser, ids, options):
+	i = 0
+	result = False
+	for text in options:
+		result = True
+		r = select_option_with(browser, ids[i], text)
+		if r == 0:
+			return False
+		elif r == 2:
+			i += 1
+			continue
+		sleep(3)
+		i += 1
+	return result
+
+def edit_case(browser, case_id):
+	if case_id.isdigit():
+		case_id = get_case_by_number('Case ID', case_id)
+	browser.get("https://qualcomm-cdmatech-support.my.salesforce.com/%s" % case_id)
+	click_timeout(browser,'//*[@id="topButtonRow"]/input[1]')
+	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
+	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, visit)))
+
 
 def assign_case(browser, case_id, user_id):
 	assign_url = "https://qualcomm-cdmatech-support.my.salesforce.com/apex/caseOwnerChange?Id=%s" % case_id
@@ -292,3 +319,42 @@ def parse_kba_pages(browser, n):
 			sleep(4)
 			cols = parse_kba(browser)
 			insert_kba(cols)
+
+def print_select(ele, out = None):
+	option = ele.find_elements_by_xpath("./option")
+	ops = []
+	for o in option:
+		ops.append(o.text)
+		if out:
+			print >>out, o.text
+	return ops
+
+def print_next_select(browser, layer, ids, out = None):
+	global print_select, print_next_select
+	ele =  find_element_by_id_timeout(browser, ids[layer])
+	if not ele:
+		return
+	ops = print_select(ele)
+	for text in ops:
+		if 'None' in text or 'Choose' in text:
+			continue
+		tab = ' '.join([ ' ' for i in xrange(layer)])
+		print >>out, layer, tab, text
+		ele =  find_element_by_id_timeout(browser, ids[layer])
+		try:
+			sel = Select(ele) 
+			sel.select_by_visible_text(text)
+		except:
+			print "except skip", layer,  ids[layer]	
+			return
+			
+		if layer + 1 >= len(ids):
+			continue
+		WebDriverWait(browser,6, 1).until(EC.visibility_of_element_located((By.ID, ids[layer + 1])))
+		sleep(3)
+		print_next_select(browser, layer + 1, ids, out)
+
+
+def enum_options(browser, ids, n = 0, out = None):
+	print_next_select(browser, n, ids, out)
+
