@@ -64,9 +64,11 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 				noassignlist.append(case)
 		if noassignlist != []:
 			print "not match case %s" % len(noassignlist)
-			#print "not match in %s case list:" % report_id
-			#for case in noassignlist:
-			#	print [ i[1] for i in case.items() ]
+			if case_id == 'test':
+				print "not match in %s case list:" % report_id
+				for case in noassignlist:
+					#print [ i[1] for i in case.items() ]
+					print case['Case Number'], case['Case ID'], case['Chipset'], case['Case Owner Alias'], case['Problem Area 1'], case['Problem Area 2'], case['Problem Area 3'],  case['Account Name'][0:16] 
 			print "======================================="
 		sleep(2)
 else:
