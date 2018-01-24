@@ -42,7 +42,7 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 			continue
 		caselist = sf.fetch_case_from_report(browser, report_id)
 		print "Report %s New Case:%d" % (report_id, len(caselist))
-		noassighlist= []
+		noassignlist= []
 		for case in caselist:
 			if case == {}:
 				continue
@@ -61,11 +61,12 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 					is_match = True
 					break
 			if not is_match:
-				noassighlist.append(case)
-		if noassighlist != []:
-			print "not match in %s case list:" % report_id
-			for case in noassighlist:
-				print [ i[1] for i in case.items() ]
+				noassignlist.append(case)
+		if noassignlist != []:
+			print "not match case %s" % len(noassignlist)
+			#print "not match in %s case list:" % report_id
+			#for case in noassignlist:
+			#	print [ i[1] for i in case.items() ]
 			print "======================================="
 		sleep(2)
 else:
