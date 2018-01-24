@@ -278,7 +278,7 @@ def fetch_case_from_report(browser, report_id):
 	fields = [ f.text for f in heads ]
 	
 	caselist = []
-	rows = ele.find_elements_by_xpath("..//tr[@class='even' and position()<100]")
+	rows = ele.find_elements_by_xpath("..//tr[(@class='even' or @class='odd') and position()<100]")
 	for onerow in rows:
 		cols = onerow.find_elements_by_xpath("./td")
 		caselist.append(dict(zip(fields, [ col.text for col in cols])))
