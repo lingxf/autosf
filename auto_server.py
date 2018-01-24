@@ -105,18 +105,21 @@ def run_server(server_address):
 						execfile('export.py')
 					except:
 						error_mail(cmd)
+						is_quit = True
 						break
 				elif cmd == 'export':
 					try:
 						execfile('export.py')
 					except:
 						error_mail(cmd)
+						is_quit = True
 						break
 				elif cmd == 'clonecheck':
 					try:
 						execfile('clonecheck.py')
 					except:
 						error_mail(cmd)
+						is_quit = True
 						break
 				elif cmd == 'status':
 					case_id, status = data.split(' ')
@@ -132,11 +135,17 @@ def run_server(server_address):
 					print >>sys.stderr, user_map
 					print >>sys.stderr, "Total User Id:",len(user_map)
 					r = [mysf.set_user_prop(alias, 'sf_id', user_id) for alias, user_id in user_map.iteritems()]
+				elif cmd == 'edit':
+					try:
+						execfile('editcase.py')
+					except:
+						error_mail(cmd)
 				elif cmd == 'assign':
 					try:
 						execfile('assign.py')
 					except:
 						error_mail(cmd)
+						is_quit = True
 						break
 				elif cmd == 'sf':
 					if data == '':
