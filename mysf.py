@@ -22,7 +22,6 @@ def get_wrong_clone_case():
 	rows = c.fetchall()
 	return rows
 
-
 def get_rules_for_queue(queue_name):
 	sql = "select * from rules where queue_name = '%s' order by priority asc " % queue_name
 	return get_rules_from_sql(sql)
@@ -79,9 +78,15 @@ def match_rule(case, condition):
 	pa1 = case['Problem Area 1']
 	pa2 = case['Problem Area 2']
 	pa3 = case['Problem Area 3']
+	subject = ''
 	rating = ''
 	sb = ''
-	ces = 1
+	if 'Subject' in case.keys():
+		subject = case['Subject']
+	if 'Account Ration' in case.keys():
+		rating = case['Account Rating']
+	if 'Support Bandwidth' in case.keys():
+		sb = case['Support Bandwidth']
 	if case['Customer Location'] != 'China' and not customer.rfind("Xiaomi") and not customer.rfind("OPPO"):
 		print "Non China case in assign except for OPPO/Xiaomi", case
 		return False
@@ -92,7 +97,6 @@ def match_rule(case, condition):
 		print "Rule exception", condition
 		pymail.error_mail("Match rule")
 	return matched
-
 
 def get_user_prop(user, prop):
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
