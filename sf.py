@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.proxy import ProxyType
 
-immport mysf
+import mysf
 from pymail import *
 from mysf import *
 from Crypto.Cipher import AES
