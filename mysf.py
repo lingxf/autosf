@@ -8,8 +8,18 @@ import pymail
 #coding:utf-8
 import MySQLdb
 
-def get_wrong_clone_case():
+global db
+db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+
+def init_database():
+	global db
 	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+
+def commit_database():
+	global db
+	db.commit()
+
+def get_wrong_clone_case():
 	c=db.cursor()
 
 	child_cond =  " Status not like 'Closed%' ";
@@ -38,7 +48,6 @@ def get_assign_rules(is_test = 'all'):
 	return get_rules_from_sql(sql)
 
 def get_rules_from_sql(sql):
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
 	c.execute(sql)
 	columns = tuple( [d[0].decode('utf8') for d in c.description] )
@@ -58,7 +67,6 @@ def check_rule_permission(case, rule):
 	pa2 = case[u'Problem Area 2']
 	pa3 = case[u'Problem Area 3']
 	alias = rule['owner']
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
 	sql = " select * from mysf.rule_permission where pa1 = '%s' and pa2 = '%s' and alias = '%s' " % (pa1, pa2, alias)
 	n = c.execute(sql)
@@ -99,15 +107,13 @@ def match_rule(case, condition):
 	return matched
 
 def get_user_prop(user, prop):
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
 	c=db.cursor()
 	sql = " select `%s` from user.user where user_id = '%s' " % (prop, user)
 	c.execute(sql)
 	return c.fetchone()[0]
 
 def set_user_prop(user, prop, value):
-	print user, value
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+	global db
 	c=db.cursor()
 	sql = " update user.user set `%s` = '%s' where user_id = '%s' " % (prop, value, user)
 	c.execute(sql)
@@ -115,17 +121,14 @@ def set_user_prop(user, prop, value):
 	return True
 
 def get_assignee(queue_id, assignee, no):
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+	global db
 	c=db.cursor()
 	li = assignee.split(',')
 	sql = " select `next` from mysf.rules where queue_id = {} ".format(queue_id)
-	c.execute(sql)
-	no = c.fetchone()[0]
+	#c.execute(sql)
+	#no = c.fetchone()[0]
 	sql = " update mysf.rules set `next` = `next` + 1 where queue_id = {} ".format(queue_id)
 	c.execute(sql)
-	c.close()
-	db.commit()
-	db.close()
 	total = len(li)
 	no = no % total
 	alias = li[no]
@@ -133,14 +136,14 @@ def get_assignee(queue_id, assignee, no):
 	return (alias, user_id)
 
 def get_case_by_number(field, case_number):
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+	global db
 	c=db.cursor()
 	sql = " select `%s` from mysf.clonecase where `Case Number` = '%s' " % (field, case_number)
 	c.execute(sql)
 	return c.fetchone()[0]
 
 def insert_kba(kbas):
-	db = MySQLdb.connect(host="10.231.249.45", user="weekly", passwd="week2pass", db="mysf", charset="utf8")
+	global db
 	c=db.cursor()
 	total_update = 0
 	total_insert = 0
@@ -172,5 +175,30 @@ def insert_kba(kbas):
 			total_insert += 1
 			print sql
 	print >>sys.stderr,"Total Update:%d, Total Insert:%d" % (total_update, total_insert)
-	db.commit()
-	db.close()
+
+def check_sfid():
+	rp = get_assign_rules('test')
+	result = True
+	for report_id, rules in rp.iteritems():
+		for rule in rules:
+			assignee = rule['assignee']
+			if not verify_assignee(assignee):
+				print rule['queue_name'], rule['condition'], assignee
+				result = False
+
+def verify_assignee(assignee):
+	li = assignee.split(',')
+	result = True
+	for alias in li:
+		user_id = get_user_prop(alias, 'sf_id')
+		if user_id == '':
+			print "%s's sf user_id has not set in" % (alias)
+			result = False
+	return result
+
+def log_assign(case_number, case_id, queue_id, alias):
+	global db
+	c=db.cursor()
+	sql = "insert into mysf.assign_log (case_number, case_id, queue_id, owner_alias) values (%s, '%s', %s, '%s') " % ( case_number, case_id, queue_id, alias)
+	c.execute(sql)
+	c.close()

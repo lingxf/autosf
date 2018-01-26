@@ -5,6 +5,8 @@ from selenium.webdriver.support.select import Select
 import sf
 import mysf
 import pymail
+import MySQLdb
+import traceback
 
 reload(sf)
 reload(mysf)
@@ -28,14 +30,15 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 		if arg:
 			print case_id, arg
 			if arg.startswith('00'):
-				rp = get_rules_for_report(arg)
+				rp = mysf.get_rules_for_report(arg)
 			else:
-				rp = get_rules_for_queue(arg)
+				rp = mysf.get_rules_for_queue(arg)
 			print rp
 		else:
-			rp = get_assign_rules(case_id)
+			rp = mysf.get_assign_rules(case_id)
 	except:
 		traceback.print_exc(file=sys.stderr)
+		rp = {}
 	for report_id, rules in rp.iteritems():
 		if len(report_id) != len('00O3A000009OxKq'):
 			print "Invalid report id", report_id
@@ -55,7 +58,12 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 					alias, user_id = get_assignee(rule['queue_id'], rule['assignee'], rule['next'])
 					print "assign case %s:%s to %s:%s by condition:%s" % (case['Case Number'],case['Case ID'],  alias, user_id, rule['condition'] )
 					if case_id != 'test':
-						assign_case(browser, case['Case ID'], user_id)	
+						if user_id == '':
+							print "%s has no user_id set yet" % rule['assignee']
+						elif assign_case(browser, case['Case ID'], user_id):
+							log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
+						else:
+							print "assign case fail"
 					else:
 						print "Test:skip assign"
 					is_match = True
@@ -76,3 +84,5 @@ else:
 	if case_id.isdigit():
 		case_id = get_case_by_number('Case ID', case_id)
 	assign_case(browser, case_id, user_id)	
+
+mysf.commit_database()

@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.proxy import ProxyType
 
+immport mysf
 from pymail import *
 from mysf import *
 from Crypto.Cipher import AES
@@ -309,7 +310,7 @@ def parse_kba_pages(browser, n):
 	for i in xrange(1, n+1):
 		print "page:", i
 		cols = parse_kba(browser)
-		insert_kba(cols)
+		mysf.insert_kba(cols)
 		xpath = "//div[@id='gridKnowledgeBasesPgr']/a[@title='Go to the next page']/span"
 		tds = browser.find_elements_by_xpath(xpath)
 		if tds != []:
@@ -319,7 +320,8 @@ def parse_kba_pages(browser, n):
 			WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, xpath)))
 			sleep(4)
 			cols = parse_kba(browser)
-			insert_kba(cols)
+			mysf.insert_kba(cols)
+	mysf.commit_database()
 
 def print_select(ele, out = None):
 	option = ele.find_elements_by_xpath("./option")

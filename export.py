@@ -55,6 +55,7 @@ elif cmd == 'export':
 		else:
 			n = 1
 		cols = parse_kba_pages(browser, n)
+		mysf.commit_database()
 	elif data == 'kba':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)
