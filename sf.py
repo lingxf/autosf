@@ -243,7 +243,8 @@ def assign_case(browser, case_id, user_id):
 	ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerId")
 	browser.execute_script("arguments[0].value = '%s';" % user_id, ele)
 	sleep(1)
-	click_timeout(browser,'//*[@id="bottomButtonRow"]/input[1]')
+	click_timeout(browser,'//*[@id="bottomButtonRow"]/input[1]', 3)
+	return True
 
 def fetch_user_id_from_report(browser, report_id):
 	url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
