@@ -18,7 +18,7 @@ comments = ''
 f = open("clone_sop.txt", "r")
 for line in f:
 	comments += line + '\r'
-if case_id == 'all':
+if case_id == 'all' or case_id == '':
 	case_list = get_wrong_clone_case()
 	print case_list
 else:
