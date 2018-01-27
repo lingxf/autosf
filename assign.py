@@ -15,7 +15,7 @@ reload(pymail)
 from sf import *
 from mysf import *
 
-sys.setdefaultencoding('utf8')
+#sys.setdefaultencoding('utf8')
 from selenium.webdriver.common.by import By 
 
 words = data.split(' ')
@@ -54,7 +54,12 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 				if not mysf.check_rule_permission(case, rule):
 					print "No permission for this case ", case
 					continue
-				if mysf.match_rule(case, rule['condition']):
+				matched = mysf.match_rule(case, rule['condition'])
+				if matched == -1:
+					rules.remove(rule)
+					print "Rule exception", rule['queue_name'], rule['condition']
+					pymail.error_mail("Error condition(%s:%s)" % (rule['queue_name'], rule['condition']))
+				if matched:
 					alias, user_id = get_assignee(rule['queue_id'], rule['assignee'], rule['next'])
 					print "assign case %s:%s to %s:%s by condition:%s" % (case['Case Number'],case['Case ID'],  alias, user_id, rule['condition'] )
 					if case_id != 'test':

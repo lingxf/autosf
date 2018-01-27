@@ -102,8 +102,8 @@ def match_rule(case, condition):
 		matched = eval(condition)
 	except:
 		matched = False
-		print "Rule exception", condition
-		pymail.error_mail("Match rule")
+		traceback.print_exc(file=sys.stderr)
+		return -1
 	return matched
 
 def get_user_prop(user, prop):
