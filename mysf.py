@@ -202,3 +202,23 @@ def log_assign(case_number, case_id, queue_id, alias):
 	sql = "insert into mysf.assign_log (case_number, case_id, queue_id, owner_alias) values (%s, '%s', %s, '%s') " % ( case_number, case_id, queue_id, alias)
 	c.execute(sql)
 	c.close()
+
+def finish_rcatask(jobid, status):
+	global db
+	tm = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	sql = "update rcaqueue set status = %d, donetime = '%s' where jobid = %s" % (status, tm, jobid)
+	c=db.cursor()
+	c.execute(sql)
+
+def get_rcatask(status):
+	sql = "select * from rcaqueue where status = %d order by timestamp asc " % status
+	return get_dicts_from_sql(sql)
+
+def get_dicts_from_sql(sql):
+	c=db.cursor()
+	c.execute(sql)
+	columns = tuple( [d[0].decode('utf8') for d in c.description] )
+	result = []
+	for row in c.fetchall():
+		result.append(dict(zip(columns, row)))
+	return result

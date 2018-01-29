@@ -25,13 +25,40 @@ if data.startswith('pa '):
 	fill_options(browser,idpa, pas[1:]) 
 	click_timeout(browser, '//input[@value="Save"]', 20);
 
+if data.startswith('rcabatch'):
+	try:
+		queue = mysf.get_rcatask(0)
+		queue += mysf.get_rcatask(2)
+		detail2 = "NO QC"
+		for task in queue:
+			rcas = task['rca'].split(':')
+			if len(rcas) < 4:
+				print "Not enough field, Skip one task:%s " % task
+				continue
+			if len(rcas) == 4:
+				summary = "Resolved"
+			else:
+				summary = rcas[4]
+			complexity = rcas[0]
+			onsite = rcas[1]
+			if onsite != 'Yes':
+				onsite = 'No'
+			main = rcas[2]
+			detail = rcas[3]
+			detail2 = 'No QC'
+			print task, rcas
+			if sf.fill_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
+				mysf.finish_rcatask(task['jobid'], 1)
+			else:
+				mysf.finish_rcatask(task['jobid'], 2)
+		mysf.commit_database()
+	except:
+		traceback.print_exc(file=sys.stderr)
+		
 if data.startswith('rca '):
-	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", "pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC", "pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
 	rcas = data[4:].split(':')
 	print rcas
 	case_id = rcas[0].strip()
-	edit_case(browser, case_id)
-
 	team = 'BSP'
 	sub = 'Linux'
 	complexity = rcas[1]
@@ -42,23 +69,8 @@ if data.startswith('rca '):
 	detail = rcas[4]
 	detail2 = 'No QC'
 	summary = rcas[5]
-	done = False
-	ele = find_element_by_id_timeout(browser,"pg:frm:blk:resolution3:caseResolutionSummary")
-	browser.execute_script("arguments[0].value = '%s';" % summary, ele)
- 	idcmplx = "pg:frm:blk:resolution:j_id56:selCaseComplexity"
-	done = select_option_with(browser, idcmplx, complexity)
-	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
-	done = select_option(browser, visit, onsite)
-	print >>sys.stderr, "Choose RCA.."
-	done = fill_options(browser,ids, [team, sub, main, detail, detail2]) 
+	fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
 
-	ele = find_element_by_id_timeout(browser, "pg:frm:blk:resolution:totalHrsCaseOwners")
-	hour = 0.5
-	#browser.execute_script("arguments[0].value = '%s';" % hour, ele)
-	if not done:
-		print >>sys.stderr, case_id, " Fail RCA"
-	print("Saving ...")
-	click_timeout(browser, '//input[@value="Save"]', 20);
 
 if data == 'enumpa':
 	idpa = [ "pg:frm:blk:pbView:problemCode1", "pg:frm:blk:pbView:problemCode2", "pg:frm:blk:pbView:problemCode3" ] 

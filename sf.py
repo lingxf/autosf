@@ -211,6 +211,9 @@ def fill_options(browser, ids, options):
 	result = False
 	for text in options:
 		result = True
+		if text == '*':
+			i += 1
+			continue
 		r = select_option_with(browser, ids[i], text)
 		if r == 0:
 			return False
@@ -228,6 +231,31 @@ def edit_case(browser, case_id):
 	click_timeout(browser,'//*[@id="topButtonRow"]/input[1]')
 	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
 	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, visit)))
+
+def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
+	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", 
+	"pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC",
+	"pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
+	done = False
+	edit_case(browser, case_id)
+	ele = find_element_by_id_timeout(browser,"pg:frm:blk:resolution3:caseResolutionSummary")
+	browser.execute_script("arguments[0].value = '%s';" % summary, ele)
+ 	idcmplx = "pg:frm:blk:resolution:j_id56:selCaseComplexity"
+	done = select_option_with(browser, idcmplx, complexity)
+	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
+	done = select_option(browser, visit, onsite)
+	print >>sys.stderr, "Choose RCA.."
+	done = fill_options(browser,ids, [team, sub, main, detail, detail2]) 
+
+	ele = find_element_by_id_timeout(browser, "pg:frm:blk:resolution:totalHrsCaseOwners")
+	hour = 0.5
+	#browser.execute_script("arguments[0].value = '%s';" % hour, ele)
+	if not done:
+		print >>sys.stderr, case_id, " Fail RCA"
+		return False
+	print("Saving ...")
+	click_timeout(browser, '//input[@value="Save"]', 20);
+	return True
 
 
 def assign_case(browser, case_id, user_id):
