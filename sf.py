@@ -273,7 +273,24 @@ def assign_case(browser, case_id, user_id):
 	browser.execute_script("arguments[0].value = '%s';" % user_id, ele)
 	sleep(1)
 	click_timeout(browser,'//*[@id="bottomButtonRow"]/input[1]', 3)
-	return True
+
+	try:
+		WebDriverWait(browser,3,0.5).until(EC.title_contains("Case:"))
+	except:
+		print "Assign case failure"
+		ooid = "pg:frm:j_id1:j_id2:j_id3:0:j_id4:j_id5:j_id7"
+		errid = "divRequired"
+		oo = browser.find_elements_by_id(ooid)
+		err  = browser.find_elements_by_id(errid)
+		if len(oo) > 0:
+			if "out of office" in oo[0].text:
+				return -1
+		if len(err) > 0:
+			if "out of office" in err[0].text:
+				print err[0].text
+				return -2
+		return -3
+	return 0
 
 def fetch_user_id_from_report(browser, report_id):
 	url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id

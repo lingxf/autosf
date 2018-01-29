@@ -78,7 +78,7 @@ def parse_cmdline(cmdline):
 def run_server(server_address):
 	server_address = "/var/lock/%s" % server_address
 	sock = start_sock(server_address)
-	global browser, proxy
+	global browser, proxy, server
 	while True:
 		print >>sys.stderr, 'waiting for a connection'
 		connection, client_address = sock.accept()
@@ -105,21 +105,24 @@ def run_server(server_address):
 						execfile('export.py')
 					except:
 						error_mail(cmd)
-						is_quit = True
+						if server != 'test':
+							is_quit = True
 						break
 				elif cmd == 'export':
 					try:
 						execfile('export.py')
 					except:
 						error_mail(cmd)
-						is_quit = True
+						if server != 'test':
+							is_quit = True
 						break
 				elif cmd == 'clonecheck':
 					try:
 						execfile('clonecheck.py')
 					except:
 						error_mail(cmd)
-						is_quit = True
+						if server != 'test':
+							is_quit = True
 						break
 				elif cmd == 'status':
 					case_id, status = data.split(' ')
@@ -140,12 +143,15 @@ def run_server(server_address):
 						execfile('editcase.py')
 					except:
 						error_mail(cmd)
+						if server != 'test':
+							is_quit = True
 				elif cmd == 'assign':
 					try:
 						execfile('assign.py')
 					except:
 						error_mail(cmd)
-						is_quit = True
+						if server != 'test':
+							is_quit = True
 						break
 				elif cmd == 'sf':
 					if data == '':

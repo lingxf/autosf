@@ -65,10 +65,14 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 					if case_id != 'test':
 						if user_id == '':
 							print "%s has no user_id set yet" % rule['assignee']
-						elif assign_case(browser, case['Case ID'], user_id):
-							log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
 						else:
-							print "assign case fail"
+							r = assign_case(browser, case['Case ID'], user_id)
+							if r == 0:
+								log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
+							elif r == -1:
+								print "assignee %s is out of office" % alias
+							else:
+								print "assign case fail"
 					else:
 						print "Test:skip assign"
 					is_match = True
@@ -84,10 +88,25 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 					print case['Case Number'], case['Case ID'], case['Chipset'], case['Case Owner Alias'], case['Problem Area 1'], case['Problem Area 2'], case['Problem Area 3'],  case['Account Name'][0:16] 
 			print "======================================="
 		sleep(2)
+elif case_id == 'verify':
+	rp = mysf.get_assign_rules(case_id)
+	result = True
+	for report_id, rules in rp.iteritems():
+		for rule in rules:
+			if not verify_assignee(rule['assignee']):
+				result = False
+	if result:
+		print "All assignee has id set"
 else:
 	user_id = get_user_prop(arg, 'sf_id')
 	if case_id.isdigit():
 		case_id = get_case_by_number('Case ID', case_id)
-	assign_case(browser, case_id, user_id)	
+	r = assign_case(browser, case_id, user_id)	
+	if r == 0:
+		log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
+	elif r == -1:
+		print "assignee %s is out of office" % arg
+	else:
+		print "assign case fail"
 
 mysf.commit_database()
