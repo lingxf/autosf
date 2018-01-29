@@ -27,9 +27,16 @@ if data.startswith('pa '):
 
 if data.startswith('rcabatch'):
 	try:
-		queue = mysf.get_rcatask(0)
-		queue += mysf.get_rcatask(2)
-		detail2 = "NO QC"
+		cmds = data.split(' ')
+		if len(cmds) > 1:
+			if cmds[1].isdigit():
+				queue = mysf.get_rcatask(cmds[1])
+			else:
+				queue = []
+		else:
+			queue = mysf.get_rcatasks(0)
+			queue += mysf.get_rcatasks(2)
+
 		for task in queue:
 			rcas = task['rca'].split(':')
 			if len(rcas) < 4:
@@ -45,7 +52,10 @@ if data.startswith('rcabatch'):
 				onsite = 'No'
 			main = rcas[2]
 			detail = rcas[3]
-			detail2 = 'No QC'
+			if task['rcateam'] == 'BSP/HLOS':
+				detail2 = 'No QC'
+			else:
+				detail2 = '*'
 			print task, rcas
 			if sf.fill_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
 				mysf.finish_rcatask(task['jobid'], 1)
