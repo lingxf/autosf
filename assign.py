@@ -89,7 +89,10 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 			print "======================================="
 		sleep(2)
 elif case_id == 'verify':
-	rp = mysf.get_assign_rules(case_id)
+	if len(words) > 1:
+		rp = mysf.get_assign_rules(words[1])
+	else:
+		rp = mysf.get_assign_rules('test')
 	result = True
 	for report_id, rules in rp.iteritems():
 		for rule in rules:
