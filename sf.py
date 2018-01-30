@@ -190,16 +190,25 @@ def sf_login(browser, url=None, timeout = 60):
 def select_option_with(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
 	ops = ele.find_elements_by_xpath("./option")
+	find = 0
 	for op in ops:
 		value = op.text
 		selected = op.get_attribute('selected')
-		if text in op.text:
-			if selected:
-				return 2
+		if text in value:
+			find += 1;
+			find_option = value
+			find_selected = selected
+	if find == 1:
+		if find_selected:
+			return 2
+		else:
 			sel = Select(ele)
-			sel.select_by_visible_text(value)
+			sel.select_by_visible_text(find_option)
 			return 1
-	return 0
+	elif find > 1:
+		return 3
+	else:
+		return 0
 
 def select_option(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
@@ -216,6 +225,10 @@ def fill_options(browser, ids, options):
 			continue
 		r = select_option_with(browser, ids[i], text)
 		if r == 0:
+			print "Not finding:%s" % text
+			return False
+		elif r == 3:
+			print "Multiple:%s" % text
 			return False
 		elif r == 2:
 			i += 1

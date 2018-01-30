@@ -31,11 +31,12 @@ if data.startswith('rcabatch'):
 		if len(cmds) > 1:
 			if cmds[1].isdigit():
 				queue = mysf.get_rcatask(cmds[1])
+			elif(cmds[1] == 'error'):
+				queue = mysf.get_rcatasks(2)
 			else:
 				queue = []
 		else:
 			queue = mysf.get_rcatasks(0)
-			queue += mysf.get_rcatasks(2)
 
 		for task in queue:
 			rcas = task['rca'].split(':')
@@ -61,7 +62,7 @@ if data.startswith('rcabatch'):
 				mysf.finish_rcatask(task['jobid'], 1)
 			else:
 				mysf.finish_rcatask(task['jobid'], 2)
-		mysf.commit_database()
+			mysf.commit_database()
 	except:
 		traceback.print_exc(file=sys.stderr)
 		
@@ -82,25 +83,43 @@ if data.startswith('rca '):
 	fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
 
 
-if data == 'enumpa':
+if data.startswith('enumpa'):
+	cmds = data.split(' ')
 	idpa = [ "pg:frm:blk:pbView:problemCode1", "pg:frm:blk:pbView:problemCode2", "pg:frm:blk:pbView:problemCode3" ] 
+	level = 0
+	if len(cmds) > 1:
+		select_option_with(browser, idpa[0], cmds[1])
+		sleep(2)
+		level += 1
+	if len(cmds) > 2:
+		select_option_with(browser, idpa[1], cmds[2])
+		sleep(2)
+		level += 1
 	edit_case(browser, '03292574')
-	select_option_with(browser, pas[0], "BSP")
-	sleep(2)
-	select_option_with(browser, pas[1], "Stability")
-	sleep(2)
-	f = open("options.txt", "w")
-	enum_options(browser, pas, 0, f)
+	f = open("pa-options.txt", "w")
+	enum_options(browser, idpa, level, f)
 	f.close()
 
-if data == 'enumrca':
-	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", "pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC", "pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
-	#ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", "pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC" ]
+if data.startswith('enumrca') or data.startswith('enumrca2'):
+	cmds = data.split(' ')
+	if cmds[0] == 'enumrca' :
+		ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", "pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC", "pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
+	if cmds[0] == 'enumrca2':
+		ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", "pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC" ]
 	edit_case(browser, '03292574')
-	select_option_with(browser, ids[0], "BSP")
-	sleep(2)
-	select_option_with(browser, ids[1], "Linux")
-	sleep(2)
+	level = 0
+	if len(cmds) > 1:
+		select_option_with(browser, ids[0], cmds[1])
+		sleep(2)
+		level += 1
+	if len(cmds) > 2:
+		select_option_with(browser, ids[1], cmds[2])
+		sleep(2)
+		level += 1
+	if len(cmds) > 3:
+		select_option_with(browser, ids[2], cmds[3])
+		sleep(2)
+		level += 1
 	f = open("rca.txt", "w")
-	enum_options(browser, ids, 0, f)
+	enum_options(browser, ids, level, f)
 	f.close()
