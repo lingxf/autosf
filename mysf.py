@@ -135,7 +135,7 @@ def get_assignee(queue_id, assignee, no):
 	c.execute(sql)
 	total = len(li)
 	no = no % total
-	alias = li[no]
+	alias = li[no].strip()
 	user_id = get_user_prop(alias, 'sf_id')
 	return (alias, user_id)
 
@@ -189,11 +189,15 @@ def check_sfid():
 			if not verify_assignee(assignee):
 				print rule['queue_name'], rule['condition'], assignee
 				result = False
+	return result
 
 def verify_assignee(assignee):
 	li = assignee.split(',')
 	result = True
 	for alias in li:
+		alias = alias.strip()
+		if alias == '':
+			continue
 		user_id = get_user_prop(alias, 'sf_id')
 		if user_id == '':
 			print "%s's sf user_id has not set in" % (alias)

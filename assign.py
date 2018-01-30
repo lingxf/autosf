@@ -90,16 +90,7 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 		sleep(2)
 elif case_id == 'verify':
 	try:
-		if len(words) > 1:
-			rp = mysf.get_assign_rules(words[1])
-		else:
-			rp = mysf.get_assign_rules('test')
-		result = True
-		for report_id, rules in rp.iteritems():
-			for rule in rules:
-				if not verify_assignee(rule['assignee']):
-					result = False
-		if result:
+		if check_sfid():
 			print "All assignee has id set"
 	except:
 		traceback.print_exc(file=sys.stderr)
