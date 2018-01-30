@@ -110,7 +110,11 @@ def get_user_prop(user, prop):
 	c=db.cursor()
 	sql = " select `%s` from user.user where user_id = '%s' " % (prop, user)
 	c.execute(sql)
-	return c.fetchone()[0]
+	ids = c.fetchone()
+	if ids and len(ids) > 0:
+		return ids[0]
+	else:
+		return ''
 
 def set_user_prop(user, prop, value):
 	global db

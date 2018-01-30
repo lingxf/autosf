@@ -89,17 +89,20 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 			print "======================================="
 		sleep(2)
 elif case_id == 'verify':
-	if len(words) > 1:
-		rp = mysf.get_assign_rules(words[1])
-	else:
-		rp = mysf.get_assign_rules('test')
-	result = True
-	for report_id, rules in rp.iteritems():
-		for rule in rules:
-			if not verify_assignee(rule['assignee']):
-				result = False
-	if result:
-		print "All assignee has id set"
+	try:
+		if len(words) > 1:
+			rp = mysf.get_assign_rules(words[1])
+		else:
+			rp = mysf.get_assign_rules('test')
+		result = True
+		for report_id, rules in rp.iteritems():
+			for rule in rules:
+				if not verify_assignee(rule['assignee']):
+					result = False
+		if result:
+			print "All assignee has id set"
+	except:
+		traceback.print_exc(file=sys.stderr)
 else:
 	user_id = get_user_prop(arg, 'sf_id')
 	if case_id.isdigit():
