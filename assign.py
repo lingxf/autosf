@@ -100,7 +100,7 @@ else:
 		case_id = get_case_by_number('Case ID', case_id)
 	r = assign_case(browser, case_id, user_id)	
 	if r == 0:
-		log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
+		log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], arg)
 	elif r == -1:
 		print "assignee %s is out of office" % arg
 	else:
