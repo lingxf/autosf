@@ -13,8 +13,11 @@ reload(pymail)
 from sf import *
 from mysf import *
 
-sys.setdefaultencoding('utf8')
+#sys.setdefaultencoding('utf8')
 from selenium.webdriver.common.by import By 
+
+if len(sys.argv) > 1:
+	data = sys.argv[1]
 
 if data.startswith('pa '):
 	idpa = [ "pg:frm:blk:pbView:problemCode1", "pg:frm:blk:pbView:problemCode2", "pg:frm:blk:pbView:problemCode3" ] 
@@ -123,3 +126,11 @@ if data.startswith('enumrca') or data.startswith('enumrca2'):
 	f = open("rca.txt", "w")
 	enum_options(browser, ids, level, f)
 	f.close()
+
+if data.startswith('list'):
+	if len(sys.argv) > 2:
+		queue = mysf.get_rcatasks(1, sys.argv[2])
+	else:
+		queue = mysf.get_rcatasks(1)
+	for task in queue:
+		print "%s:%s" % (task['case_number'], task['rca'])
