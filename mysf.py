@@ -218,8 +218,11 @@ def finish_rcatask(jobid, status):
 	c=db.cursor()
 	c.execute(sql)
 
-def get_rcatasks(status):
-	sql = "select * from rcaqueue where status = %d order by timestamp asc " % status
+def get_rcatasks(status, owner=''):
+	if owner == '':
+		sql = "select * from rcaqueue where status = %d order by timestamp asc " % status
+	else:
+		sql = "select * from rcaqueue where status = %d and owner = '%s' order by timestamp asc " % (status, owner)
 	return get_dicts_from_sql(sql)
 
 def get_rcatask(case):
