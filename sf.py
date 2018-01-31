@@ -290,7 +290,6 @@ def assign_case(browser, case_id, user_id):
 	try:
 		WebDriverWait(browser,3,0.5).until(EC.title_contains("Case:"))
 	except:
-		print "Assign case failure"
 		ooid = "pg:frm:j_id1:j_id2:j_id3:0:j_id4:j_id5:j_id7"
 		errid = "divRequired"
 		oo = browser.find_elements_by_id(ooid)
@@ -299,9 +298,8 @@ def assign_case(browser, case_id, user_id):
 			if "out of office" in oo[0].text:
 				return -1
 		if len(err) > 0:
-			if "out of office" in err[0].text:
-				print err[0].text
-				return -2
+			print err[0].text
+			return -2
 		return -3
 	return 0
 
