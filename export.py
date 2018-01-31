@@ -80,6 +80,10 @@ elif cmd == 'export':
 			report_id = '00O3A000009OpFh' #today
 		elif data == 'yesterday':
 			report_id = '00O3A000009OqB7' #yesterday
+		elif data == 'kba_case':
+			report_id = '00O3A000009HWZB' #yesterday
+		elif data == 'kba_case2':
+			report_id = '00O3A000009HdCE' #yesterday
 		else:
 			report_id = data
 		url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
