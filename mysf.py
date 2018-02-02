@@ -89,6 +89,7 @@ def match_rule(case, condition):
 	subject = ''
 	rating = ''
 	sb = ''
+	customer = customer.replace('\'', '')
 	if 'Subject' in case.keys():
 		subject = case['Subject']
 	if 'Account Ration' in case.keys():
