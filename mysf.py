@@ -130,8 +130,8 @@ def get_assignee(queue_id, assignee, no):
 	c=db.cursor()
 	li = assignee.split(',')
 	sql = " select `next` from mysf.rules where queue_id = {} ".format(queue_id)
-	#c.execute(sql)
-	#no = c.fetchone()[0]
+	c.execute(sql)
+	no = c.fetchone()[0]
 	sql = " update mysf.rules set `next` = `next` + 1 where queue_id = {} ".format(queue_id)
 	c.execute(sql)
 	total = len(li)
