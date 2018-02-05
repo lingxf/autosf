@@ -15,9 +15,9 @@ from mysf import *
 
 #sys.setdefaultencoding('utf8')
 from selenium.webdriver.common.by import By 
-
-if len(sys.argv) > 1:
-	data = sys.argv[1]
+if __name__=='__main__':
+	if len(sys.argv) > 4:
+		data = sys.argv[1]
 
 if data.startswith('pa '):
 	idpa = [ "pg:frm:blk:pbView:problemCode1", "pg:frm:blk:pbView:problemCode2", "pg:frm:blk:pbView:problemCode3" ] 
@@ -40,7 +40,6 @@ if data.startswith('rcabatch'):
 				queue = []
 		else:
 			queue = mysf.get_rcatasks(0)
-
 		for task in queue:
 			rcas = task['rca'].split(':')
 			if len(rcas) < 4:
