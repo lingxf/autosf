@@ -89,6 +89,7 @@ def match_rule(case, condition):
 	subject = ''
 	rating = ''
 	sb = ''
+	hour = int(datetime.datetime.now.strftime("%H"))
 	customer = customer.replace('\'', '')
 	if 'Subject' in case.keys():
 		subject = case['Subject']
