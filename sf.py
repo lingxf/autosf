@@ -189,6 +189,9 @@ def sf_login(browser, url=None, timeout = 60):
 
 def select_option_with(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
+	element_select_option_with(ele, text)
+
+def element_select_option_with(ele, text):
 	ops = ele.find_elements_by_xpath("./option")
 	find = 0
 	for op in ops:
@@ -242,8 +245,22 @@ def edit_case(browser, case_id):
 		case_id = get_case_by_number('Case ID', case_id)
 	browser.get("https://qualcomm-cdmatech-support.my.salesforce.com/%s" % case_id)
 	click_timeout(browser,'//*[@id="topButtonRow"]/input[1]')
-	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
-	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, visit)))
+	eid = "pg:frm:blk:resolution:rcaTeam"
+	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, eid)))
+	#eid = "pg:frm:blk:resolution:selResolved"
+	#eid = "pg:frm:blk:resolution:resolvedSection:selResolved"
+
+def find_element_by_2id(browser, eid1, eid2):
+	eles = browser.find_elements_by_id(eid1)
+	if len(eles) > 0:
+		ele = eles[0]
+	else:
+		eles = browser.find_elements_by_id(eid2)
+		if len(eles) > 0:
+			ele = eles[0]
+		else:
+			return False
+	return ele
 
 def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
 	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", 
@@ -251,17 +268,31 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 	"pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
 	done = False
 	edit_case(browser, case_id)
-	ele = find_element_by_id_timeout(browser,"pg:frm:blk:resolution3:caseResolutionSummary")
-	browser.execute_script("arguments[0].value = '%s';" % summary, ele)
- 	idcmplx = "pg:frm:blk:resolution:j_id56:selCaseComplexity"
-	done = select_option_with(browser, idcmplx, complexity)
-	visit = "pg:frm:blk:resolution:resolvedSection:selResolved"
-	done = select_option(browser, visit, onsite)
+	eid1 = "pg:frm:blk:resolution3:caseResolutionSummary"
+	eid2 = "pg:frm:blk:resolution:j_id405"
+	ele = find_element_by_2id(browser, eid1, eid2)
+	if ele:
+		browser.execute_script("arguments[0].value = '%s';" % summary, ele)
+	else:
+		print "Fail to find resolution summary"
+		return False
+
+ 	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:j_id56:selCaseComplexity", "pg:frm:blk:resolution3:selCaseComplexity")
+	if ele:
+		done = element_select_option_with(ele, complexity)
+	else:
+		print "Fail to find complexity"
+		return False
+ 	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:resolvedSection:selResolved", "pg:frm:blk:resolution:selResolved")
+	if ele:
+		sel = Select(ele)
+		sel.select_by_visible_text(onsite)
+
 	print >>sys.stderr, "Choose RCA.."
 	done = fill_options(browser,ids, [team, sub, main, detail, detail2]) 
 
-	ele = find_element_by_id_timeout(browser, "pg:frm:blk:resolution:totalHrsCaseOwners")
-	hour = 0.5
+	#ele = find_element_by_id_timeout(browser, "pg:frm:blk:resolution:totalHrsCaseOwners")
+	#hour = 0.5
 	#browser.execute_script("arguments[0].value = '%s';" % hour, ele)
 	if not done:
 		print >>sys.stderr, case_id, " Fail RCA"

@@ -2,7 +2,9 @@
 #coding:utf-8
 import sys
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import *
 import sf
+import traceback
 import mysf
 import pymail
 
@@ -69,20 +71,27 @@ if data.startswith('rcabatch'):
 		traceback.print_exc(file=sys.stderr)
 		
 if data.startswith('rca '):
-	rcas = data[4:].split(':')
-	print rcas
-	case_id = rcas[0].strip()
-	team = 'BSP'
-	sub = 'Linux'
-	complexity = rcas[1]
-	onsite = rcas[2]
-	if onsite != 'Yes':
-		onsite = 'No'
-	main = rcas[3]
-	detail = rcas[4]
-	detail2 = 'No QC'
-	summary = rcas[5]
-	fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
+	try:
+		rcas = data[4:].split(':')
+		print rcas
+		case_id = rcas[0].strip()
+		team = 'BSP'
+		sub = 'Linux'
+		complexity = rcas[1]
+		onsite = rcas[2]
+		if onsite != 'Yes':
+			onsite = 'No'
+		main = rcas[3]
+		detail = rcas[4]
+		detail2 = 'No QC'
+		summary = rcas[5]
+		fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
+	except UnexpectedAlertPresentException:
+		print "Alert Window"
+		alert = browser.switch_to.alert
+		alert.accept()
+	except:
+		traceback.print_exc(file=sys.stderr)
 
 
 if data.startswith('enumpa'):
