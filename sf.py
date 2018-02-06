@@ -250,11 +250,13 @@ def edit_case(browser, case_id):
 	#eid = "pg:frm:blk:resolution:selResolved"
 	#eid = "pg:frm:blk:resolution:resolvedSection:selResolved"
 
-def find_element_by_2id(browser, eid1, eid2):
+def find_element_by_2id(browser, eid1, eid2 = None):
 	eles = browser.find_elements_by_id(eid1)
 	if len(eles) > 0:
 		ele = eles[0]
 	else:
+		if eid == None:
+			return False
 		eles = browser.find_elements_by_id(eid2)
 		if len(eles) > 0:
 			ele = eles[0]
@@ -262,12 +264,24 @@ def find_element_by_2id(browser, eid1, eid2):
 			return False
 	return ele
 
-def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
-	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", 
-	"pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC",
-	"pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
+def change_case_subject(browser, case_id, subject):
+	edit_case(browser, case_id)
+	eid = "pg:frm:blk:productData:pbsi_caseSubject"
+	ele = find_elements_by_2id(browser, eid)
+	if ele:
+		browser.execute_script("arguments[0].value = '%s';" % subject, ele)
+		return True
+	return False
+
+
+def change_resolution_summary(browser, case_id, summary):
 	done = False
 	edit_case(browser, case_id)
+	if not fill_resolution_summary(browser, summary):
+		return False
+	return True
+
+def fill_resolution_summary(browser, case_id, summary):
 	eid1 = "pg:frm:blk:resolution3:caseResolutionSummary"
 	eid2 = "pg:frm:blk:resolution:j_id405"
 	ele = find_element_by_2id(browser, eid1, eid2)
@@ -275,6 +289,24 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 		browser.execute_script("arguments[0].value = '%s';" % summary, ele)
 	else:
 		print "Fail to find resolution summary"
+		return False
+
+def change_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
+	edit_case(browser, case_id)
+	if not fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
+		return False
+	print("Saving ...")
+	click_timeout(browser, '//input[@value="Save"]', 20);
+	return True
+
+def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
+	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", 
+	"pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC",
+	"pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
+	done = False
+	edit_case(browser, case_id)
+
+	if not fill_resolution_summary(browser, summary):
 		return False
 
  	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:j_id56:selCaseComplexity", "pg:frm:blk:resolution3:selCaseComplexity")
@@ -297,9 +329,6 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 	if not done:
 		print >>sys.stderr, case_id, " Fail RCA"
 		return False
-	print("Saving ...")
-	click_timeout(browser, '//input[@value="Save"]', 20);
-	return True
 
 
 def assign_case(browser, case_id, user_id):

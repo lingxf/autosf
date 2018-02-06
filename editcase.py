@@ -62,7 +62,7 @@ if data.startswith('rcabatch'):
 			else:
 				detail2 = '*'
 			print task, rcas
-			if sf.fill_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
+			if sf.change_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
 				mysf.finish_rcatask(task['jobid'], 1)
 			else:
 				mysf.finish_rcatask(task['jobid'], 2)
@@ -85,7 +85,7 @@ if data.startswith('rca '):
 		detail = rcas[4]
 		detail2 = 'No QC'
 		summary = rcas[5]
-		fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
+		change_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2)
 	except UnexpectedAlertPresentException:
 		print "Alert Window"
 		alert = browser.switch_to.alert
@@ -93,6 +93,17 @@ if data.startswith('rca '):
 	except:
 		traceback.print_exc(file=sys.stderr)
 
+if data.startswith('summary '):
+	words = data[9:].split(':')
+	case_id = words[0].strip()
+	summary = words[1]
+	change_resolution_summary(browser, case_id, summary)
+
+if data.startswith('subject '):
+	words = data[8:].split(':')
+	case_id = words[0].strip()
+	summary = words[1]
+	change_case_subject(browser, case_id, summary)
 
 if data.startswith('enumpa'):
 	cmds = data.split(' ')
