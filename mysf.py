@@ -86,6 +86,10 @@ def match_rule(case, condition):
 	pa1 = case['Problem Area 1']
 	pa2 = case['Problem Area 2']
 	pa3 = case['Problem Area 3']
+	ces = 0
+	if 'Account Case Assignment Criteria' in case.keys():
+		if case['Account Case Assignment Criteria'] == 'Thundersoft CES signed':
+			ces = 1
 	subject = ''
 	rating = ''
 	sb = ''
@@ -214,10 +218,10 @@ def log_assign(case_number, case_id, queue_id, alias):
 	c.execute(sql)
 	c.close()
 
-def finish_rcatask(jobid, status):
+def finish_rcatask(jobid, status, message=''):
 	global db
 	tm = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-	sql = "update rcaqueue set status = %d, donetime = '%s' where jobid = %s" % (status, tm, jobid)
+	sql = "update rcaqueue set status = %d, donetime = '%s', error_msg = '%s' where jobid = %s" % (status, tm, message, jobid)
 	c=db.cursor()
 	c.execute(sql)
 
