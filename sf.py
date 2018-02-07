@@ -22,6 +22,8 @@ try:
 except ImportError: 
   import xml.etree.ElementTree as ET 
 
+global error_msg
+error_msg = 0
 def click_timeout(browser, xpath, seconds=10):
 	while(True):
 		try:
@@ -189,7 +191,7 @@ def sf_login(browser, url=None, timeout = 60):
 
 def select_option_with(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
-	element_select_option_with(ele, text)
+	return element_select_option_with(ele, text)
 
 def element_select_option_with(ele, text):
 	ops = ele.find_elements_by_xpath("./option")
@@ -221,6 +223,7 @@ def select_option(browser, eid, text):
 def fill_options(browser, ids, options):
 	i = 0
 	result = False
+	global error_msg
 	for text in options:
 		result = True
 		if text == '*':
@@ -228,10 +231,12 @@ def fill_options(browser, ids, options):
 			continue
 		r = select_option_with(browser, ids[i], text)
 		if r == 0:
-			print "Not finding:%s" % text
+			error_msg = "Not finding:%s" % text
+			print error_msg
 			return False
 		elif r == 3:
-			print "Multiple:%s" % text
+			error_msg = "Multiple:%s" % text
+			print error_msg
 			return False
 		elif r == 2:
 			i += 1
@@ -255,7 +260,7 @@ def find_element_by_2id(browser, eid1, eid2 = None):
 	if len(eles) > 0:
 		ele = eles[0]
 	else:
-		if eid == None:
+		if eid2 == None:
 			return False
 		eles = browser.find_elements_by_id(eid2)
 		if len(eles) > 0:
@@ -263,33 +268,6 @@ def find_element_by_2id(browser, eid1, eid2 = None):
 		else:
 			return False
 	return ele
-
-def change_case_subject(browser, case_id, subject):
-	edit_case(browser, case_id)
-	eid = "pg:frm:blk:productData:pbsi_caseSubject"
-	ele = find_elements_by_2id(browser, eid)
-	if ele:
-		browser.execute_script("arguments[0].value = '%s';" % subject, ele)
-		return True
-	return False
-
-
-def change_resolution_summary(browser, case_id, summary):
-	done = False
-	edit_case(browser, case_id)
-	if not fill_resolution_summary(browser, summary):
-		return False
-	return True
-
-def fill_resolution_summary(browser, case_id, summary):
-	eid1 = "pg:frm:blk:resolution3:caseResolutionSummary"
-	eid2 = "pg:frm:blk:resolution:j_id405"
-	ele = find_element_by_2id(browser, eid1, eid2)
-	if ele:
-		browser.execute_script("arguments[0].value = '%s';" % summary, ele)
-	else:
-		print "Fail to find resolution summary"
-		return False
 
 def change_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
 	edit_case(browser, case_id)
@@ -299,12 +277,43 @@ def change_case_rca(browser, case_id, complexity, onsite, team, sub, summary, ma
 	click_timeout(browser, '//input[@value="Save"]', 20);
 	return True
 
+def change_case_subject(browser, case_id, subject):
+	edit_case(browser, case_id)
+	eid = "pg:frm:blk:productData:pbsi_caseSubject"
+	ele = find_element_by_2id(browser, eid)
+	if not ele:
+		return False
+	browser.execute_script("arguments[0].value = '%s';" % subject, ele)
+	print("Saving ...")
+	click_timeout(browser, '//input[@value="Save"]', 20);
+	return True
+
+def change_resolution_summary(browser, case_id, summary):
+	done = False
+	edit_case(browser, case_id)
+	if not fill_resolution_summary(browser, summary):
+		return False
+	print("Saving ...")
+	click_timeout(browser, '//input[@value="Save"]', 20);
+	return True
+
+def fill_resolution_summary(browser, summary):
+	eid1 = "pg:frm:blk:resolution3:caseResolutionSummary"
+	eid2 = "pg:frm:blk:resolution:j_id405"
+	ele = find_element_by_2id(browser, eid1, eid2)
+	if ele:
+		browser.execute_script("arguments[0].value = '%s';" % summary, ele)
+	else:
+		print "Not find to find resolution summary"
+		return False
+	return True
+
 def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
 	ids = [ "pg:frm:blk:resolution:rcaTeam", "pg:frm:blk:resolution:rcaSubTeam", 
 	"pg:frm:blk:resolution2:rcaDetailRootCause", "pg:frm:blk:resolution3:pgblkSctItemRCADetailRC:selRCADetailRC",
 	"pg:frm:blk:resolution3:pgblkSctItemRCA2DetailRC2:selRCA2DetailRC" ]
 	done = False
-	edit_case(browser, case_id)
+	global error_msg
 
 	if not fill_resolution_summary(browser, summary):
 		return False
@@ -313,7 +322,8 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 	if ele:
 		done = element_select_option_with(ele, complexity)
 	else:
-		print "Fail to find complexity"
+		error_msg = "Fail to find complexity"
+		print error_msg
 		return False
  	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:resolvedSection:selResolved", "pg:frm:blk:resolution:selResolved")
 	if ele:
@@ -327,8 +337,9 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 	#hour = 0.5
 	#browser.execute_script("arguments[0].value = '%s';" % hour, ele)
 	if not done:
-		print >>sys.stderr, case_id, " Fail RCA"
+		print >>sys.stderr, case_id, " Fail to Choose RCA"
 		return False
+	return True
 
 
 def assign_case(browser, case_id, user_id):

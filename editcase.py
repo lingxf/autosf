@@ -62,10 +62,11 @@ if data.startswith('rcabatch'):
 			else:
 				detail2 = '*'
 			print task, rcas
+			sf.error_msg = ''
 			if sf.change_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
 				mysf.finish_rcatask(task['jobid'], 1)
 			else:
-				mysf.finish_rcatask(task['jobid'], 2)
+				mysf.finish_rcatask(task['jobid'], 2, sf.error_msg)
 			mysf.commit_database()
 	except:
 		traceback.print_exc(file=sys.stderr)
