@@ -43,30 +43,37 @@ if data.startswith('rcabatch'):
 		else:
 			queue = mysf.get_rcatasks(0)
 		for task in queue:
-			rcas = task['rca'].split(':')
-			if len(rcas) < 4:
-				print "Not enough field, Skip one task:%s " % task
-				continue
-			if len(rcas) == 4:
-				summary = "Resolved"
-			else:
-				summary = rcas[4]
-			complexity = rcas[0]
-			onsite = rcas[1]
-			if onsite != 'Yes':
-				onsite = 'No'
-			main = rcas[2]
-			detail = rcas[3]
-			if task['rcateam'] == 'BSP/HLOS':
-				detail2 = 'No QC'
-			else:
-				detail2 = '*'
-			print task, rcas
-			sf.error_msg = ''
-			if sf.change_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
-				mysf.finish_rcatask(task['jobid'], 1)
-			else:
-				mysf.finish_rcatask(task['jobid'], 2, sf.error_msg)
+			if task['action'] == 1:
+				rcas = task['rca'].split(':')
+				if len(rcas) < 4:
+					print "Not enough field, Skip one task:%s " % task
+					continue
+				if len(rcas) == 4:
+					summary = "Resolved"
+				else:
+					summary = rcas[4]
+				complexity = rcas[0]
+				onsite = rcas[1]
+				if onsite != 'Yes':
+					onsite = 'No'
+				main = rcas[2]
+				detail = rcas[3]
+				if task['rcateam'] == 'BSP/HLOS':
+					detail2 = 'No QC'
+				else:
+					detail2 = '*'
+				print task, rcas
+				sf.error_msg = ''
+				if sf.change_case_rca(browser, task['case_id'], complexity, onsite, task['rcateam'], task['subteam'], summary, main, detail, detail2 ):
+					mysf.finish_rcatask(task['jobid'], 1)
+				else:
+					mysf.finish_rcatask(task['jobid'], 2, sf.error_msg)
+			elif task['action'] == 1:
+				subject = task['rca']
+				if sf.change_case_subject(browser, task['case_id'], subject):
+					mysf.finish_rcatask(task['jobid'], 1)
+				else:
+					mysf.finish_rcatask(task['jobid'], 2, sf.error_msg)
 			mysf.commit_database()
 	except:
 		traceback.print_exc(file=sys.stderr)
@@ -149,7 +156,7 @@ if data.startswith('enumrca') or data.startswith('enumrca2'):
 
 if data.startswith('list'):
 	if len(sys.argv) > 2:
-		queue = mysf.get_rcatasks(1, sys.argv[2])
+		queue = mysf.get_rcatasks(1, 1, sys.argv[2])
 	else:
 		queue = mysf.get_rcatasks(1)
 	for task in queue:
