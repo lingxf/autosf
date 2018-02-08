@@ -42,6 +42,7 @@ if data.startswith('rcabatch'):
 				queue = []
 		else:
 			queue = mysf.get_rcatasks(0)
+		print queue
 		for task in queue:
 			if task['action'] == 1:
 				rcas = task['rca'].split(':')
@@ -68,8 +69,9 @@ if data.startswith('rcabatch'):
 					mysf.finish_rcatask(task['jobid'], 1)
 				else:
 					mysf.finish_rcatask(task['jobid'], 2, sf.error_msg)
-			elif task['action'] == 1:
+			elif task['action'] == 2:
 				subject = task['rca']
+				print "Change title %s" % subject
 				if sf.change_case_subject(browser, task['case_id'], subject):
 					mysf.finish_rcatask(task['jobid'], 1)
 				else:

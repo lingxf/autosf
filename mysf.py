@@ -225,7 +225,7 @@ def finish_rcatask(jobid, status, message=''):
 	c=db.cursor()
 	c.execute(sql)
 
-def get_rcatasks(status, action=1, owner=''):
+def get_rcatasks(status, action=0, owner=''):
 	if owner == '':
 		sql = "select * from rcaqueue where status = %d " % (status)
 	else:
@@ -235,7 +235,7 @@ def get_rcatasks(status, action=1, owner=''):
 	sql += "order by timestamp asc "
 	return get_dicts_from_sql(sql)
 
-def get_rcatask(case, action=1):
+def get_rcatask(case, action=0):
 	sql = "select * from rcaqueue where case_number = '%s' and action = %s order by timestamp asc " % (case, action)
 	return get_dicts_from_sql(sql)
 
