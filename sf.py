@@ -217,8 +217,11 @@ def element_select_option_with(ele, text):
 
 def select_option(browser, eid, text):
 	ele = find_element_by_id_timeout(browser, eid)
-	sel = Select(ele)
-	sel.select_by_visible_text(text)
+	if ele:
+		sel = Select(ele)
+		sel.select_by_visible_text(text)
+		return True
+	return False
 
 def fill_options(browser, ids, options):
 	i = 0
@@ -347,7 +350,9 @@ def assign_case(browser, case_id, user_id):
 	browser.get(assign_url)
 	click_timeout(browser, '//*[@id="pg:frm:j_id27:j_id30"]')
 	sleep(2)
-	select_option(browser, "pg:frm:pbOwner:ownerSelectionType", "User")
+	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", "User")
+		print "not finding User selection"
+		return -3
 	sleep(1)
 	ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerName")
 	ele.clear()
