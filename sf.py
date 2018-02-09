@@ -350,7 +350,7 @@ def assign_case(browser, case_id, user_id):
 	browser.get(assign_url)
 	click_timeout(browser, '//*[@id="pg:frm:j_id27:j_id30"]')
 	sleep(2)
-	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", "User")
+	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", "User"):
 		print "not finding User selection"
 		return -3
 	sleep(1)
