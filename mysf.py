@@ -90,6 +90,8 @@ def match_rule(case, condition):
 	if 'Account Case Assignment Criteria' in case.keys():
 		if case['Account Case Assignment Criteria'] == 'Thundersoft CES signed':
 			ces = 1
+	if 'Primary TAM' in case.keys():
+		tam = case['Primary TAM']
 	subject = ''
 	rating = ''
 	sb = ''
