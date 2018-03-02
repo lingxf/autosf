@@ -207,13 +207,17 @@ if len(sys.argv) > 3:
 server = sys.argv[1]
 
 while(True):
-	if server == 'simple':
-		browser = open_browser(proxy)
-		browser.get("http://cedump-sh.ap.qualcomm.com/report/show_mysfrule.php")
-	else:
-		if timeout:
-			browser = sf_start(None, proxy, timeout)
+	try:
+		if server == 'simple':
+			browser = open_browser(proxy)
+			browser.get("http://cedump-sh.ap.qualcomm.com/report/show_mysfrule.php")
 		else:
-			browser = sf_start(None, proxy)
-	run_server(server)
+			if timeout:
+				browser = sf_start(None, proxy, timeout)
+			else:
+				browser = sf_start(None, proxy)
+		run_server(server)
+	except:
+		print "Login rerun error"
+		time.sleep(24)
 	time.sleep(6)
