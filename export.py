@@ -44,6 +44,14 @@ elif cmd == 'export':
 		WebDriverWait(browser,300, 1).until(EC.presence_of_element_located((By.XPATH, title)))
 		print >>sys.stderr, "Now click rule export..."
 		click_timeout(browser, title)
+	elif data == 'qc-ph':
+		url = "http://people.qualcomm.com/People?query=xdzhu&field=regularrollups&match=eq&type=person&sort=cn&format=xls"
+		browser.get(url)
+		sleep(2)
+	elif data == 'ts-ph':
+		url = "http://people.qualcomm.com/People?query=xdzhu&field=temprollups&match=eq&type=person&sort=cn&format=xls"
+		browser.get(url)
+		sleep(2)
 	elif data == 'kid':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)
