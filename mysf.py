@@ -92,6 +92,8 @@ def match_rule(case, condition):
 			ces = 1
 	if 'Primary TAM' in case.keys():
 		tam = case['Primary TAM']
+	if 'Contact Name' in case.keys():
+		contact = case['Contact Name']; 
 	subject = ''
 	rating = ''
 	sb = ''
