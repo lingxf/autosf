@@ -350,16 +350,22 @@ def assign_case(browser, case_id, user_id):
 	browser.get(assign_url)
 	click_timeout(browser, '//*[@id="pg:frm:j_id27:j_id30"]')
 	sleep(2)
-	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", "User"):
+	if user_id.find('_') != -1:
+		atype = "Queue"
+	else
+		atype = "User"
+	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", atype):
 		print "not finding User selection"
 		return -3
 	sleep(1)
-	ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerName")
-	ele.clear()
+	if user_id.find('_') == -1:
+		ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerId")
+	else
+		ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerName")
+	browser.execute_script("arguments[0].value = '%s';" % user_id, ele)
+	#ele.clear()
 	#ele.send_keys("Xiaofeng Ling")
 	print ele.get_attribute('value')
-	ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerId")
-	browser.execute_script("arguments[0].value = '%s';" % user_id, ele)
 	sleep(1)
 	click_timeout(browser,'//*[@id="bottomButtonRow"]/input[1]', 3)
 

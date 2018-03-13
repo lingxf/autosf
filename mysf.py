@@ -147,7 +147,10 @@ def get_assignee(queue_id, assignee, no):
 	total = len(li)
 	no = no % total
 	alias = li[no].strip()
-	user_id = get_user_prop(alias, 'sf_id')
+	if user_id.find('_') == -1:
+		user_id = get_user_prop(alias, 'sf_id')
+	if user_id.startswith('c_') == -1:
+		user_id = get_user_prop(alias, 'sf_id')
 	return (alias, user_id)
 
 def get_case_by_number(field, case_number):

@@ -95,7 +95,8 @@ elif case_id == 'verify':
 	except:
 		traceback.print_exc(file=sys.stderr)
 else:
-	user_id = get_user_prop(arg, 'sf_id')
+	if user_id.startswith('c_') or user_id.find('_') == -1:
+		user_id = get_user_prop(arg, 'sf_id')
 	if case_id.isdigit():
 		case_id = get_case_by_number('Case ID', case_id)
 	r = assign_case(browser, case_id, user_id)	
