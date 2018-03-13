@@ -352,7 +352,7 @@ def assign_case(browser, case_id, user_id):
 	sleep(2)
 	if user_id.find('_') != -1:
 		atype = "Queue"
-	else
+	else:
 		atype = "User"
 	if not select_option(browser, "pg:frm:pbOwner:ownerSelectionType", atype):
 		print "not finding User selection"
@@ -360,7 +360,7 @@ def assign_case(browser, case_id, user_id):
 	sleep(1)
 	if user_id.find('_') == -1:
 		ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerId")
-	else
+	else:
 		ele = browser.find_element_by_id("pg:frm:pbOwner:newOwnerName")
 	browser.execute_script("arguments[0].value = '%s';" % user_id, ele)
 	#ele.clear()
