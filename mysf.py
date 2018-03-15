@@ -153,7 +153,7 @@ def get_assignee(queue_id, assignee, no):
 	user_id = alias
 	if alias.find('_') == -1:
 		user_id = get_user_prop(alias, 'sf_id')
-	if alias.startswith('c_') == -1:
+	if alias.startswith('c_'):
 		user_id = get_user_prop(alias, 'sf_id')
 	return (alias, user_id)
 

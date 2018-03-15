@@ -54,6 +54,8 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 				if not mysf.check_rule_permission(case, rule):
 					print "No permission for this case ", case
 					continue
+				if case_id == 'test':
+					print [ i[1] for i in case.items() ]
 				matched = mysf.match_rule(case, rule['condition'])
 				if matched == -1:
 					rules.remove(rule)
@@ -95,13 +97,14 @@ elif case_id == 'verify':
 	except:
 		traceback.print_exc(file=sys.stderr)
 else:
+	user_id = arg
 	if user_id.startswith('c_') or user_id.find('_') == -1:
 		user_id = get_user_prop(arg, 'sf_id')
 	if case_id.isdigit():
 		case_id = get_case_by_number('Case ID', case_id)
 	r = assign_case(browser, case_id, user_id)	
 	if r == 0:
-		log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], arg)
+		print "assign %s to %s sucessfully " % (case_id, user_id)
 	elif r == -1:
 		print "assignee %s is out of office" % arg
 	else:
