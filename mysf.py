@@ -32,6 +32,16 @@ def get_wrong_clone_case():
 	rows = c.fetchall()
 	return rows
 
+def get_except_clone_case():
+	c=db.cursor()
+	sql = " select case_number from mysf.clone_except where status = 256+1 ";
+	c.execute(sql)
+	rows = c.fetchall()
+	cases = []
+	for row in rows:
+		cases.append(row[0])
+	return cases
+
 def get_rules_for_queue(queue_name):
 	sql = "select * from rules where queue_name = '%s' order by priority asc " % queue_name
 	return get_rules_from_sql(sql)
