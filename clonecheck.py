@@ -21,8 +21,7 @@ for line in f:
 try:
 	if case_id == 'all' or case_id == '':
 		case_list = get_wrong_clone_case()
-		except_list = []
-	except_list = get_except_clone_case()
+		except_list = get_except_clone_case()
 		print case_list
 		print "exception:"
 		print except_list
