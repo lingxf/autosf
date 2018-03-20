@@ -239,6 +239,20 @@ def log_assign(case_number, case_id, queue_id, alias):
 	c.execute(sql)
 	c.close()
 
+def log_assign_status(case_number, case_id, queue_id, alias, status):
+	global db
+	c=db.cursor()
+	sql = "insert into mysf.assign_log_status (case_number, case_id, queue_id, owner_alias, status) values (%s, '%s', %s, '%s', %s) " % ( case_number, case_id, queue_id, alias, status)
+	c.execute(sql)
+	c.close()
+
+def log_assign_after(case_number, case_id, queue_id, alias, status):
+	global db
+	c=db.cursor()
+	sql = "update mysf.assign_log_pre set status = %s, timestamp = '%s' where case_number = %s and case_id = '%s' and queue_id = %s and owner_alias = %s, "  % ( status, time, case_number, case_id, queue_id, alias)
+	c.execute(sql)
+	c.close()
+
 def finish_rcatask(jobid, status, message=''):
 	global db
 	tm = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

@@ -68,13 +68,14 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 						if user_id == '':
 							print "%s has no user_id set yet" % rule['assignee']
 						else:
-							r = assign_case(browser, case['Case ID'], user_id)
+							log_assign_status(case['Case Number'], case['Case ID'], rule['queue_id'], alias, 100)
 							if r == 0:
 								log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
 							elif r == -1:
 								print "assignee %s is out of office" % alias
 							else:
 								print "assign case fail"
+							log_assign_status(case['Case Number'], case['Case ID'], rule['queue_id'], alias, r)
 					else:
 						print "Test:skip assign"
 					is_match = True
