@@ -25,6 +25,7 @@ except ImportError:
 global error_msg
 error_msg = 0
 def click_timeout(browser, xpath, seconds=10):
+	global error_msg
 	while(True):
 		try:
 			browser.find_element_by_xpath(xpath).click()
@@ -32,9 +33,11 @@ def click_timeout(browser, xpath, seconds=10):
 		except:
 			if seconds <= 0:
 				traceback.print_exc()
-				break
+				error_msg = "click %s fail" % xpath
+				return False
 			sleep(1);
 			seconds -= 1
+	return True
 
 def sendkey_timeout(browser, xpath, value, seconds=10):
 	while(True):
@@ -252,9 +255,11 @@ def edit_case(browser, case_id):
 	if case_id.isdigit():
 		case_id = get_case_by_number('Case ID', case_id)
 	browser.get("https://qualcomm-cdmatech-support.my.salesforce.com/%s" % case_id)
-	click_timeout(browser,'//*[@id="topButtonRow"]/input[1]')
+	if not click_timeout(browser,'//*[@id="topButtonRow"]/input[1]'):
+		return False
 	eid = "pg:frm:blk:resolution:rcaTeam"
 	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, eid)))
+	return True
 	#eid = "pg:frm:blk:resolution:selResolved"
 	#eid = "pg:frm:blk:resolution:resolvedSection:selResolved"
 
@@ -273,12 +278,12 @@ def find_element_by_2id(browser, eid1, eid2 = None):
 	return ele
 
 def change_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
-	edit_case(browser, case_id)
+	if not edit_case(browser, case_id):
+		return False
 	if not fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main, detail, detail2):
 		return False
 	print("Saving ...")
-	click_timeout(browser, '//input[@value="Save"]', 20);
-	return True
+	return click_timeout(browser, '//input[@value="Save"]', 20);
 
 def change_case_subject(browser, case_id, subject):
 	edit_case(browser, case_id)
