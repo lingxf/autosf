@@ -66,7 +66,7 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 					print "assign case %s:%s to %s:%s by condition:%s" % (case['Case Number'],case['Case ID'],  alias, user_id, rule['condition'] )
 					if case_id != 'test':
 						if user_id == '':
-							print "%s has no user_id set yet" % rule['assignee']
+							print "[%s] has no user_id set yet" % rule['assignee']
 						else:
 							log_assign_status(case['Case Number'], case['Case ID'], rule['queue_id'], alias, 100)
 							if r == 0:
