@@ -104,6 +104,8 @@ def run_server(server_address):
 					try:
 						execfile('export.py')
 					except:
+						mysf.log_assign_status(0, cmd, 0, data, 0)
+						mysf.commit_database()
 						error_mail(cmd)
 						if server != 'test':
 							is_quit = True
@@ -112,6 +114,8 @@ def run_server(server_address):
 					try:
 						execfile('export.py')
 					except:
+						mysf.log_assign_status(0, cmd, 0, data, 0)
+						mysf.commit_database()
 						error_mail(cmd)
 						if server != 'test':
 							is_quit = True
@@ -120,6 +124,8 @@ def run_server(server_address):
 					try:
 						execfile('clonecheck.py')
 					except:
+						mysf.log_assign_status(0, cmd, 0, data, 0)
+						mysf.commit_database()
 						error_mail(cmd)
 						if server != 'test':
 							is_quit = True
@@ -149,6 +155,8 @@ def run_server(server_address):
 					try:
 						execfile('assign.py')
 					except:
+						mysf.log_assign_status(0, cmd, 0, data, 0)
+						mysf.commit_database()
 						error_mail(cmd)
 						if server != 'test':
 							is_quit = True

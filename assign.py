@@ -69,6 +69,7 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 							print "[%s] has no user_id set yet" % rule['assignee']
 						else:
 							log_assign_status(case['Case Number'], case['Case ID'], rule['queue_id'], alias, 100)
+							r = assign_case(browser, case['Case ID'], user_id)
 							if r == 0:
 								log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
 							elif r == -1:
