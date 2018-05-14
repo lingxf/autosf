@@ -326,7 +326,7 @@ def fill_case_rca(browser, case_id, complexity, onsite, team, sub, summary, main
 	if not fill_resolution_summary(browser, summary):
 		return False
 
- 	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:j_id56:selCaseComplexity", "pg:frm:blk:resolution3:selCaseComplexity")
+ 	ele = find_element_by_2id(browser, "pg:frm:blk:resolution:j_id57:selCaseComplexity", "pg:frm:blk:resolution3:selCaseComplexity")
 	if ele:
 		done = element_select_option_with(ele, complexity)
 	else:
