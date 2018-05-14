@@ -289,7 +289,9 @@ def change_case_subject(browser, case_id, subject):
 	edit_case(browser, case_id)
 	eid = "pg:frm:blk:productData:pbsi_caseSubject"
 	ele = find_element_by_2id(browser, eid)
+	global error_msg
 	if not ele:
+		error_msg = "Fail to find subject id,case may close "
 		return False
 	browser.execute_script("arguments[0].value = '%s';" % subject, ele)
 	print("Saving ...")
