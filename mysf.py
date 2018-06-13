@@ -34,7 +34,7 @@ def get_wrong_clone_case():
 
 def get_except_clone_case():
 	c=db.cursor()
-	sql = " select case_number from mysf.clone_except where status = 256+1 ";
+	sql = " select case_number from mysf.clone_except where status = 256+1 or (status = 1 and child_alias = clead)";
 	c.execute(sql)
 	rows = c.fetchall()
 	cases = []
