@@ -227,5 +227,6 @@ while(True):
 		run_server(server)
 	except:
 		print "Login rerun error"
+		traceback.print_exc(file=sys.stderr)
 		time.sleep(24)
 	time.sleep(6)
