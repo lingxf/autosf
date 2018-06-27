@@ -39,7 +39,7 @@ try:
 		WebDriverWait(browser,10,0.5).until(EC.title_contains("Case:"))
 		WebDriverWait(browser,10,0.5).until(EC.url_contains(case_id))
 		try:
-			if not change_status(browser, 'researchi'):
+			if not change_status(browser, 'hold'):
 				error_mail("Clonecheck:Save case status %s:%s failure, please check" % (case_number, case_id))
 				continue
 			if not add_comments(browser, comments, case_id):
