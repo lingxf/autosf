@@ -213,17 +213,21 @@ if len(sys.argv) > 3:
 	timeout = int(sys.argv[3])
 
 server = sys.argv[1]
-
+reopen = 0
 while(True):
 	try:
 		if server == 'simple':
 			browser = open_browser(proxy)
 			browser.get("http://cedump-sh.ap.qualcomm.com/report/show_mysfrule.php")
 		else:
+			if reopen > 10:
+				error_mail("reopen>10")
+				break
 			if timeout:
 				browser = sf_start(None, proxy, timeout)
 			else:
 				browser = sf_start(None, proxy)
+			reopen += 1
 		run_server(server)
 	except:
 		print "Login rerun error"
