@@ -1,0 +1,5 @@
+[Auto Reply]
+According to clone case SOP, parent case can not be closed before internal cloned child case.
+http://cedump-sh.ap.qualcomm.com/easyapps/Cross_Area_Case_Handling_SOP.pptx
+This case is changed to Hold-Customer automatically.
+
