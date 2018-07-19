@@ -83,7 +83,11 @@ def change_status(browser, status, option=None):
 	print("Edit...")
 	click_timeout(browser,'//*[@id="topButtonRow"]/input[1]')
 	eid = "pg:frm:blk:title:StatusSection:selStatus"
-	WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, eid)))
+	try:
+		WebDriverWait(browser,10, 1).until(EC.presence_of_element_located((By.ID, eid)))
+	except:
+		print >>sys.stderr, "Open case edit fail"
+		return False
 	select_option(browser, eid, str_status)
 	try:
 		WebDriverWait(browser,6, 1).until(EC.visibility_of_element_located((By.ID, 'pg:frm:blk:title:StatusSection:statusforStatus.start')))
@@ -129,7 +133,8 @@ def add_comments(browser, comments, case_id = None, is_public=False):
 	return True
 
 def open_browser(proxy=None, download=None):
-	profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/nw3oghgt.auto/')
+	#profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/nw3oghgt.auto/')
+	profile = webdriver.FirefoxProfile(r'/home/xling/.mozilla/firefox/j0sto346.auto/')
 	profile.native_events_enabled = True
 	if download:
 		profile.set_preference("browser.download.dir", download);
@@ -395,7 +400,11 @@ def assign_case(browser, case_id, user_id):
 def fetch_user_id_from_report(browser, report_id):
 	url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
 	browser.get(url)
-	WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'headerRow_0')))
+	try:
+		WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'headerRow_0')))
+	except:
+		print >>sys.stderr,"access user id report fail"
+		return {}
 	ele = browser.find_element_by_id('headerRow_0')
 	heads = ele.find_elements_by_xpath(".//th[*]/a/strong")
 	fields = [ f.text for f in heads ]
@@ -419,12 +428,16 @@ def fetch_user_id_from_report(browser, report_id):
 def fetch_case_from_report(browser, report_id):
 	url="https://qualcomm-cdmatech-support.my.salesforce.com/%s" % report_id
 	browser.get(url)
-	WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'headerRow_0')))
+	caselist = []
+	try:
+		WebDriverWait(browser, 10, 1).until(EC.presence_of_element_located((By.ID, 'headerRow_0')))
+	except:
+		print >>sys.stderr,"access sf report fail"
+		return caselist
 	ele = browser.find_element_by_id('headerRow_0')
 	heads = ele.find_elements_by_xpath(".//th[*]/a/strong")
 	fields = [ f.text for f in heads ]
 	
-	caselist = []
 	rows = ele.find_elements_by_xpath("..//tr[(@class='even' or @class='odd') and position()<100]")
 	for onerow in rows:
 		cols = onerow.find_elements_by_xpath("./td")
