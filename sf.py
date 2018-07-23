@@ -2,6 +2,7 @@
 #coding:utf-8
 import sys
 import re
+import getpass
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.keys import Keys
@@ -22,8 +23,11 @@ try:
 except ImportError: 
   import xml.etree.ElementTree as ET 
 
-global error_msg
+global error_msg, user_name, user_pwd
 error_msg = 0
+user_name = None
+user_pwd = None
+
 def click_timeout(browser, xpath, seconds=10):
 	global error_msg
 	while(True):
@@ -153,20 +157,27 @@ def open_browser(proxy=None, download=None):
 	return browser
 
 def sf_start(url, proxy=None, timeout=60):
+	global user_name, user_pwd
+	if os.path.exists('passwd'):
+		f = open("passwd", "rb")
+		user_name = "xling"
+		user_pwd = f.readline().strip()
+		ciphertext = base64.b64decode(user_pwd)
+		obj2 = AES.new('This is a key123', AES.MODE_CFB, 'This is an IV456')
+		user_pwd = obj2.decrypt(ciphertext)
+	elif user_pwd is None:
+		user_name = raw_input("User Name:")
+		user_pwd = getpass.getpass("Password:")
+
 	browser = open_browser(proxy)
 	sf_login(browser, url, timeout) 
 	return browser
 
 def sf_login(browser, url=None, timeout = 60):
+	global user_name, user_pwd
 	default_url = "https://qualcomm-cdmatech-support.my.salesforce.com/00O3A000009OpFh"
-	user_name = "xling"
-	f = open("passwd", "rb")
-	user_pwd = f.readline().strip()
+				
 	browser.get(default_url)
-
-	ciphertext = base64.b64decode(user_pwd)
-	obj2 = AES.new('This is a key123', AES.MODE_CFB, 'This is an IV456')
-	user_pwd = obj2.decrypt(ciphertext)
 
 	print "login...."
 	state = 0

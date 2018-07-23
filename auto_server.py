@@ -12,6 +12,7 @@ import re
 import cookielib
 import json
 import datetime
+import getpass
 
 #from ticket import *
 from lxml import etree
@@ -44,9 +45,9 @@ from selenium.webdriver.support.select import Select
 import base64
 from Crypto.Cipher import AES
 
-global browser, proxy
+global browser, proxy, reopen
 
-
+reopen = 0
 
 def start_sock(server_address):
 	try:
@@ -78,7 +79,7 @@ def parse_cmdline(cmdline):
 def run_server(server_address):
 	server_address = "/var/lock/%s" % server_address
 	sock = start_sock(server_address)
-	global browser, proxy, server
+	global browser, proxy, server, reopen
 	while True:
 		print >>sys.stderr, 'waiting for a connection'
 		connection, client_address = sock.accept()
@@ -168,6 +169,7 @@ def run_server(server_address):
 						sf_login(browser, None, int(data))
 				elif cmd == 'restart':
 					browser.quit()
+					reopen -= 1
 					if data != '':
 						proxy = set_proxy(data)
 					browser = open_browser(proxy)
@@ -178,6 +180,7 @@ def run_server(server_address):
 						traceback.print_exc(file=sys.stderr)
 				elif cmd == 'quit':
 					is_quit = True
+					reopen -= 1
 				else:
 					break
 		except:
@@ -213,7 +216,7 @@ if len(sys.argv) > 3:
 	timeout = int(sys.argv[3])
 
 server = sys.argv[1]
-reopen = 0
+
 while(True):
 	try:
 		if server == 'simple':
@@ -223,6 +226,7 @@ while(True):
 			if reopen > 10:
 				error_mail("reopen>10")
 				break
+			print "reopen times:%d" % reopen
 			if timeout:
 				browser = sf_start(None, proxy, timeout)
 			else:
