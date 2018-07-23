@@ -172,6 +172,12 @@ def sf_start(url, user_name, user_pwd, proxy=None, timeout=60):
 	sf_login(browser, user_name, user_pwd, url, timeout) 
 	return browser
 
+def make_ps(user_pwd):
+	obj2 = AES.new('This is a key123', AES.MODE_CFB, 'This is an IV456')
+	user_pwd = obj2.encrypt(user_pwd)
+	user_pwd = base64.b64encode(user_pwd)
+	print user_pwd
+
 def sf_login(browser, user_name, user_pwd, url=None, timeout = 60):
 	default_url = "https://qualcomm-cdmatech-support.my.salesforce.com/00O3A000009OpFh"
 	browser.get(default_url)
