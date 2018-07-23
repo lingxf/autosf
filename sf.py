@@ -23,10 +23,8 @@ try:
 except ImportError: 
   import xml.etree.ElementTree as ET 
 
-global error_msg, user_name, user_pwd
+global error_msg
 error_msg = 0
-user_name = None
-user_pwd = None
 
 def click_timeout(browser, xpath, seconds=10):
 	global error_msg
@@ -156,8 +154,7 @@ def open_browser(proxy=None, download=None):
 	#brwser.implicitly_wait(60)
 	return browser
 
-def sf_start(url, proxy=None, timeout=60):
-	global user_name, user_pwd
+def get_userpwd(user_name, user_pwd):
 	if os.path.exists('passwd'):
 		f = open("passwd", "rb")
 		user_name = "xling"
@@ -168,17 +165,16 @@ def sf_start(url, proxy=None, timeout=60):
 	elif user_pwd is None:
 		user_name = raw_input("User Name:")
 		user_pwd = getpass.getpass("Password:")
+	return user_name, user_pwd
 
+def sf_start(url, user_name, user_pwd, proxy=None, timeout=60):
 	browser = open_browser(proxy)
-	sf_login(browser, url, timeout) 
+	sf_login(browser, user_name, user_pwd, url, timeout) 
 	return browser
 
-def sf_login(browser, url=None, timeout = 60):
-	global user_name, user_pwd
+def sf_login(browser, user_name, user_pwd, url=None, timeout = 60):
 	default_url = "https://qualcomm-cdmatech-support.my.salesforce.com/00O3A000009OpFh"
-				
 	browser.get(default_url)
-
 	print "login...."
 	state = 0
 	while timeout > 0:

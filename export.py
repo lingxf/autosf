@@ -46,12 +46,21 @@ elif cmd == 'export':
 		click_timeout(browser, title)
 	elif data == 'qc-ph':
 		url = "http://people.qualcomm.com/People?query=xdzhu&field=regularrollups&match=eq&type=person&sort=cn&format=xls"
-		browser.get(url)
-		sleep(2)
+		print >>sys.stderr, "Now export qc user..."
+		try:
+			browser.implicitly_wait(20)
+			browser.get(url)
+		except:
+			print "browser get Timeout"
+		print >>sys.stderr, "Done"
 	elif data == 'ts-ph':
 		url = "http://people.qualcomm.com/People?query=xdzhu&field=temprollups&match=eq&type=person&sort=cn&format=xls"
-		browser.get(url)
-		sleep(2)
+		print >>sys.stderr, "Now export ts user..."
+		try:
+			browser.get(url)
+		except:
+			print "browser get Timeout"
+		print >>sys.stderr, "Done"
 	elif data == 'kid':
 		url = "https://aggregator.qualcomm.com/Views/Pages/KnowledgeBases.aspx"
 		browser.get(url)

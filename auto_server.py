@@ -45,9 +45,11 @@ from selenium.webdriver.support.select import Select
 import base64
 from Crypto.Cipher import AES
 
-global browser, proxy, reopen
+global browser, proxy, reopen, user_name, user_pwd
 
 reopen = 0
+user_name = None
+user_pwd = None
 
 def start_sock(server_address):
 	try:
@@ -227,10 +229,11 @@ while(True):
 				error_mail("reopen>10")
 				break
 			print "reopen times:%d" % reopen
+			user_name, user_pwd = get_userpwd(user_name, user_pwd)
 			if timeout:
-				browser = sf_start(None, proxy, timeout)
+				browser = sf_start(None, user_name, user_pwd, proxy, timeout)
 			else:
-				browser = sf_start(None, proxy)
+				browser = sf_start(None, user_name, user_pwd, proxy)
 			reopen += 1
 		run_server(server)
 	except:
