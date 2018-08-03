@@ -72,6 +72,7 @@ if case_id == 'all' or case_id == 'test' or case_id == 'run':
 							r = assign_case(browser, case['Case ID'], user_id)
 							if r == 0:
 								log_assign(case['Case Number'], case['Case ID'], rule['queue_id'], alias)
+								update_queue(rule['queue_id'], rule['assignee'])
 							elif r == -1:
 								print "assignee %s is out of office" % alias
 							else:

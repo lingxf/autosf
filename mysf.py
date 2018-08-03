@@ -148,6 +148,16 @@ def set_user_prop(user, prop, value):
 	db.commit()
 	return True
 
+def update_queue(queue_id, assignee):
+	global db
+	c=db.cursor()
+	li = assignee.split(',')
+	sql = " update mysf.rules set `matches` = `matches` + 1 where queue_id = {} ".format(queue_id)
+	c.execute(sql)
+	total = len(li)
+	no = no % total
+	return
+
 def get_assignee(queue_id, assignee, no):
 	global db
 	c=db.cursor()
@@ -155,10 +165,10 @@ def get_assignee(queue_id, assignee, no):
 	sql = " select `next` from mysf.rules where queue_id = {} ".format(queue_id)
 	c.execute(sql)
 	no = c.fetchone()[0]
-	sql = " update mysf.rules set `next` = `next` + 1 where queue_id = {} ".format(queue_id)
-	c.execute(sql)
 	total = len(li)
 	no = no % total
+	sql = " update mysf.rules set `next` = {} where queue_id = {} ".format(no, queue_id)
+	c.execute(sql)
 	alias = li[no].strip()
 	user_id = alias
 	if alias.find('_') == -1:
